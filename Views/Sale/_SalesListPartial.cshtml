@@ -1,0 +1,25 @@
+﻿<table class="table" id="saleDetailTable">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <input type="hidden" class="saleDetailId" />
+            <input type="hidden" class="saleMasterId" />
+            <td><select class="itemId" style="width:100%;"><option value=0>-- Select Item --</option></select></td>
+            <td><input type="number" class="itemQty" /></td>
+            <td><input type="number" readonly class="itemPrice" /></td>
+            <td><input type="number" readonly class="itemAmount" /></td>
+            <td>
+                <button type="button" class="addNewRow" onclick="addNewRow()">Add New Row</button>
+                <button type="button" class="deleteRow" onclick="deleteRow(this)">Delete Row</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

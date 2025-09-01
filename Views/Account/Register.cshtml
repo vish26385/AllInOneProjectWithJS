@@ -1,0 +1,56 @@
+﻿<h2>Register</h2>
+
+<form id="registerForm">
+    <table>
+        <tr>
+            <td><label>Username</label></td>
+        </tr>
+        <tr>
+            <td><input type="text" style="width:100%;" id="registerUsername" placeholder="Enter Username" required /></td>
+        </tr>
+        <tr>
+            <td><label>Email</label></td>
+        </tr>
+        <tr>
+            <td><input type="email" style="width:100%;" id="registerEmail" placeholder="Enter Email" required /></td>
+        </tr>
+        <tr>
+            <td><label>Password</label></td>
+        </tr>
+        <tr>
+            <td><input type="password" style="width:100%;margin-bottom:5px;" id="registerPassword" placeholder="Enter Password" required /></td>
+        </tr>
+        <tr>
+            <td><button type="button" style="width:100%;margin-bottom:5px;" onclick="register()">Register</button></td>
+        </tr>
+        <tr>
+            <td><label>Already member?</label><a href="/Account/Login">Sign in</a></td>
+        </tr>
+    </table>
+</form>
+<div id="registerMessage"></div>
+<script>
+    function register() {
+        const username = document.getElementById('registerUsername').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        fetch('/Account/Register', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify ({username,email,password})
+        })
+        .then(res => res.json())
+        .then(msg => {
+            document.getElementById('registerMessage').innerText = msg;
+            if (msg == "Registered")
+            {
+                window.location.href = '/Account/Login';
+            }
+        });
+    }
+    window.onload = function()
+    {
+        document.getElementById('registerUsername')?.focus();
+    }
+</script>

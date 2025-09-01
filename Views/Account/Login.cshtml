@@ -1,0 +1,53 @@
+﻿<h2>Login</h2>
+
+<form id="loginForm">
+    <table>
+        <tr>
+            <td><label>Username</label></td>
+        </tr>
+        <tr>
+            <td><input type="text" style="width:100%;" id="loginUsername" placeholder="Enter Username" required /></td>
+        </tr>
+        <tr>
+            <td><label>Password</label></td>
+        </tr>
+        <tr>
+            <td><input type="password" style="width:100%;" id="loginPassword" placeholder="Enter Password" required /></td>
+        </tr>
+        <tr>
+            <td style="text-align:right;"><a href="/Account/ForgotPassword">Forgot Password?</a></td>
+        </tr>
+        <tr>
+            <td><button type="button" style="width:100%;margin-bottom:5px;" onclick="login()">Login</button></td>
+        </tr>
+        <tr>
+            <td><label>Not a member?</label><a href="/Account/Register">Sign up now</a></td>
+        </tr>
+    </table>
+</form>
+<div id="loginMessage"></div>
+<script>
+    function login() {
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        fetch('/Account/Login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({username,password})
+        })
+        .then(res => res.json())
+        .then(msg => {
+            document.getElementById('loginMessage').innerText = msg;
+            if (msg == "Success")
+            {
+                window.location.href = '/Item/Item';
+            }
+        });
+    }
+
+    window.onload = function()
+    {
+        document.getElementById('loginUsername')?.focus();
+    }
+</script>

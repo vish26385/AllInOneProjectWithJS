@@ -1,0 +1,132 @@
+﻿<h2>Items</h2>
+
+<div>
+    <input type="hidden" id="itemId" />
+    <input type="text" placeholder="Item Name" id="itemName" required />
+    <input type="number" step="0.01" margin-bottom:5px;" placeholder="Item Price" id="itemPrice" />
+    <button type="button" id="btnItemSave" onclick="insertItem()">Save</button>
+</div>
+
+<div id="itemMessage"></div>
+<table style="margin-top:30px;">
+    <tr><th>Name</th><th>Price</th><th>Actions</th></tr>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <input type="text" style="width:100%;" value=@item.Name />
+                </td>
+                <td>
+                    <input type="number" style="width:100%;" value=@item.Price />
+                </td>
+                <td>
+                    <button type="button" style="width:100%;" onclick="editItem(@item.Id,'@item.Name',@item.Price)">Edit</button>
+                </td>
+                <td>
+                    <button type="button" style="width:100%;" onclick="deleteItem(@item.Id)">Delete</button>
+                </td>
+                <td>
+                    <button type="button" style="width:100%;" onclick="addToCart(@item.Id)">Add To Cart</button>
+                </td>
+            </tr>
+        }
+    }
+</table>
+
+<script>
+    async function insertItem() {
+         const name = document.getElementById('itemName').value;
+         const price = document.getElementById('itemPrice').value;
+         try {
+               const response = await fetch('/Item/InsertItem', {
+                  method:'POST',
+                  headers:{'Content-Type':'application/json'},
+                  body:JSON.stringify({name,price})
+             });
+
+              const result = await response.json();
+
+              document.getElementById('itemMessage').innerText = result.message;
+
+               if (result.success) {
+                  window.location.href = '/Item/Item';
+              }
+         }
+         catch (error) {
+              console.error('Error:', error);
+         }
+     }
+
+     function editItem(id,name,price) {
+         document.getElementById('itemId').value = id;
+         document.getElementById('itemName').value = name;
+         document.getElementById('itemPrice').value = price;
+         document.getElementById('btnItemSave').onclick = updateItem;
+         document.getElementById('btnItemSave').innerText = "Update";
+     }
+
+    async function updateItem() {
+         const id = document.getElementById('itemId').value;
+         const name = document.getElementById('itemName').value;
+         const price = document.getElementById('itemPrice').value;
+         try {
+                 const response = await fetch('/Item/UpdateItem', {
+                     method:'POST',
+                     headers:{'Content-Type':'application/json'},
+                     body:JSON.stringify({id,name,price})
+             });
+
+             const result = await response.json();
+
+             document.getElementById('itemMessage').innerText = result.message;
+
+             if (result.success) {
+                 window.location.href = '/Item/Item';
+             }
+         } catch (error) {
+             console.error('Error:', error);
+         }
+     }
+
+     async function deleteItem(id) {
+         try {
+             const response = await fetch('/Item/DeleteItem?id=' + id, {
+                 method: 'POST'
+             });
+
+             const result = await response.json();
+
+             document.getElementById('itemMessage').innerText = result.message;
+
+             if (result.success) {
+                 window.location.href = '/Item/Item';
+             }
+         } catch (error) {
+             console.error('Error:', error);
+         }
+     }
+
+    async function addToCart(itemId) {
+        try {
+              const response = await fetch('/Cart/AddToCart?itemId=' + itemId, {
+                  method:'POST'
+            });
+
+             const result = await response.json();
+
+             document.getElementById('itemMessage').innerText = result.message;
+
+             if (result.success) {
+                 window.location.href = '/Item/Item';
+             }
+         } catch (error) {
+             console.error('Error:', error);
+         }
+     }
+
+     window.onload = function() {
+         document.getElementById('itemName')?.focus();
+     }
+</script>

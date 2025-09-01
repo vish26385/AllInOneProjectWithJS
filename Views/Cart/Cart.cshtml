@@ -1,0 +1,44 @@
+﻿<h2>Your Cart</h2>
+
+<table>
+    <tr><th>Name</th><th>Price</th><th>Actions</th></tr>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <input type="hidden" value=@item.Id />
+                <td>
+                    <input type="text" value=@item.Name />
+                </td>
+                <td>
+                    <input type="number" value=@item.Price />
+                </td>
+                <td>
+                    <button type="button" onclick="removeFromCart(@item.Id)">Remove From Cart</button>
+                </td>
+            </tr>
+        }
+    }
+</table>
+<div id="cartMessage"></div>
+
+<script>
+    async function removeFromCart(itemId) {
+        try   {
+                 const response = await  fetch('/Cart/RemoveFromCart?itemId=' + itemId,{
+                     method:'POST'
+              });
+
+              const result = await response.json();
+
+              document.getElementById('cartMessage').innerText = result.message;
+
+              if (result.success) {
+                    window.location.href = '/Cart/Cart';
+              }
+        } catch (error) {
+            console.error('Error:', error);
+          }
+      }
+</script>

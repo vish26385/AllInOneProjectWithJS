@@ -1,0 +1,77 @@
+﻿@using System.Text.Json
+@* <table class="table-bordered">
+    <thead>
+        <tr>
+            <th style="text-align:center;">Item</th>           
+            <th style="text-align:center;">Date</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:center;">Rate</th>
+            <th style="text-align:center;">Amount</th>
+            <th style="text-align:center;">Party</th>
+            <th style="text-align:center;">Actions</th>
+        </tr>
+    </thead>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <input readonly type="hidden" id="idSaleDetailId" value=@item.SaleDetailId />
+                <input readonly type="hidden" id="idSaleMasterId" value=@item.Id />
+                <input readonly type="hidden" id="idItemId" value=@item.itemId />
+                <input readonly type="hidden" id="idPartyId" value=@item.PartyId />
+                <input readonly type="hidden" id="idDueDays" value=@item.DueDays />
+                <input readonly type="hidden" id="idDueDate" value=@item.DueDate />
+
+                <td><input readonly type="text" id="idItemName" value="@item.ItemName" /></td>                          
+                <td><input readonly type="text" id="idSaleDate" value=@item.SaleDate></td>
+                <td><input readonly type="number" id="idItemQty" value=@item.Qty /></td>
+                <td><input readonly type="number" id="idItemPrice" value=@item.Price /></td>
+                <td><input readonly type="text" id="idItemAmount" value=@item.Amount /></td>
+                <td><input readonly type="text" id="idPartyName" value="@item.PartyName" /></td>
+                <td>
+                    <button type="button" id="btnEdit" data-salesdetails='@Html.Raw(JsonSerializer.Serialize(item.salesDetails))'
+                        onclick="editSale(@item.Id,'@item.SaleDate',@item.DueDays,'@item.DueDate',@item.PartyId, this)">Edit</button>
+                    <button type="button" id="btnDelete" onclick="deleteSalesData(@item.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    }
+</table> *@
+
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th style="text-align:center;">Code</th>
+            <th style="text-align:center;">Date</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:center;">Amount</th>
+            <th style="text-align:center;">Due Date</th>
+            <th style="text-align:center;">Party</th>
+            <th style="text-align:center;">Actions</th>
+        </tr>
+    </thead>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <input readonly type="hidden" id="idDueDays" value=@item.DueDays />
+                <input readonly type="hidden" id="idPartyId" value=@item.PartyId />
+                <td><input readonly type="number" id="idSaleMasterId" value=@item.Id /></td>
+                <td><input readonly type="text" id="idSaleDate" value=@item.SaleDate></td>
+                <td><input readonly type="number" id="idItemQty" value=@item.Qty /></td>
+                <td><input readonly type="number" id="idItemAmount" value=@item.Amount /></td>
+                <td><input readonly type="text" id="idDueDate" value=@item.DueDate /></td>
+                <td><input readonly type="text" id="idPartyName" value="@item.PartyName" /></td>
+                <td>
+                    <button type="button" id="btnEdit" data-salesdetails='@Html.Raw(JsonSerializer.Serialize(item.salesDetails))'
+                            onclick="editSale(@item.Id,'@item.SaleDate',@item.DueDays,'@item.DueDate',@item.PartyId, this)">
+                        Edit
+                    </button>
+                    <button type="button" id="btnDelete" onclick="deleteSalesData(@item.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    }
+</table>

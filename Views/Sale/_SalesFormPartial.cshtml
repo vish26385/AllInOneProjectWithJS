@@ -1,0 +1,24 @@
+﻿<div>
+    <div style="height:10px;">
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+        <label>Code</label>
+        <input type="number" style="width:8%;" readonly id="saleMasterId" />
+
+        <label>Date</label>
+        <input type="date" id="saleDate" />
+
+        <label>Due Days</label>
+        <input type="number" style="width:8%;" id="dueDays" />
+
+        <label>Due Date</label>
+        <input type="date" step="1" id="dueDate" />
+
+        <label>Party</label>
+        <select style="width:15%;" id="partyId">
+            <option value=0>-- Select Party --</option>
+        </select>
+
+        <button type="button" id="btnSave" onclick="saveSalesData()">Save</button>
+    </div>
+</div>
