@@ -1,4 +1,5 @@
 ﻿using AllInOneProject.Data;
+using AllInOneProject.DTOs;
 using AllInOneProject.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -44,6 +45,9 @@ namespace AllInOneProject.Controllers
                 Password = request.Password,
                 Role = "User"
             };
+            // Hash the password
+            var passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -63,27 +67,38 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] RegisterRequest request)  
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName && x.Password == request.Password);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName);
             if (user != null)
             {
-                var claims = new List<Claim>
+                var passwordHasher = new PasswordHasher<User>();
+                var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+
+                if (result == PasswordVerificationResult.Success)
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    // add more claims if needed
-                };
+                    // Password is correct, proceed with login
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        // add more claims if needed
+                    };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // Issue the authentication cookie
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    new AuthenticationProperties { IsPersistent = true });
+                    // Issue the authentication cookie
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        new AuthenticationProperties { IsPersistent = true });
 
-                HttpContext.Session.SetInt32("UserId", user.Id);
-                HttpContext.Session.SetString("Role", user.Role);
-                return Json("Success");
+                    HttpContext.Session.SetInt32("UserId", user.Id);
+                    HttpContext.Session.SetString("Role", user.Role);
+                    return Json("Success");
+                }
+                else
+                {
+                    return Json("Invalid Credentials!");
+                }                
             }
 
             return Json("Invalid Credentials!");
@@ -95,12 +110,5 @@ namespace AllInOneProject.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
-    }
-
-    public class RegisterRequest
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
     }
 }
