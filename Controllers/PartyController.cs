@@ -2,6 +2,7 @@
 using AllInOneProject.DTOs;
 using AllInOneProject.Models;
 using AllInOneProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using System.Data;
 
 namespace AllInOneProject.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PartyController : Controller
     {
         private readonly ApplicationDbContext _context;

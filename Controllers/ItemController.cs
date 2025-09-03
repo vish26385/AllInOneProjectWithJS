@@ -3,12 +3,14 @@ using AllInOneProject.DTOs;
 using AllInOneProject.Services;
 using Azure;
 using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace AllInOneProject.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class ItemController : Controller
     {
         private readonly IItemService _itemService;

@@ -2,6 +2,7 @@
 using AllInOneProject.DTOs;
 using AllInOneProject.Models;
 using AllInOneProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Data;
 
 namespace AllInOneProject.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class SaleController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -103,29 +105,29 @@ namespace AllInOneProject.Controllers
             //            })
             //            .ToList()
 
-            var saleData = await _context.SalesMas
-                            .Include(sm => sm.PartyMaster)
-                            .Include(sm => sm.salesDetails)
-                            .ThenInclude(sd => sd.ItemMaster)
-                            .Select(sm => new
-                            {
-                                Id = sm.Id,
-                                SaleDate = sm.SalesDate.ToString("yyyy-MM-dd"),
-                                DueDays = sm.DueDays,
-                                DueDate = sm.DueDate.ToString("yyyy-MM-dd"),
-                                PartyId = sm.PartyId,
-                                PartyName = sm.PartyMaster.Name,
-                                Qty = sm.salesDetails.Sum(sd => sd.Qty),
-                                Amount = Convert.ToDecimal(sm.salesDetails.Sum(sd => sd.Qty * sd.ItemMaster.Price)),
-                                salesDetails = sm.salesDetails.Select(sd => new
-                                {
-                                    sd.Id,
-                                    sd.itemId,
-                                    sd.SalesMasterId,
-                                    sd.Qty
-                                }).ToList()
-                            }).ToListAsync();
-
+            //var saleData = await _context.SalesMas
+            //                .Include(sm => sm.PartyMaster)
+            //                .Include(sm => sm.salesDetails)
+            //                .ThenInclude(sd => sd.ItemMaster)
+            //                .Select(sm => new
+            //                {
+            //                    Id = sm.Id,
+            //                    SaleDate = sm.SalesDate.ToString("yyyy-MM-dd"),
+            //                    DueDays = sm.DueDays,
+            //                    DueDate = sm.DueDate.ToString("yyyy-MM-dd"),
+            //                    PartyId = sm.PartyId,
+            //                    PartyName = sm.PartyMaster.Name,
+            //                    Qty = sm.salesDetails.Sum(sd => sd.Qty),
+            //                    Amount = Convert.ToDecimal(sm.salesDetails.Sum(sd => sd.Qty * sd.ItemMaster.Price)),
+            //                    salesDetails = sm.salesDetails.Select(sd => new
+            //                    {
+            //                        sd.Id,
+            //                        sd.itemId,
+            //                        sd.SalesMasterId,
+            //                        sd.Qty
+            //                    }).ToList()
+            //                }).ToListAsync();
+            var saleData = await _saleService.GetSaleDataListAsync();
             return View(saleData);
         }
         [HttpGet]

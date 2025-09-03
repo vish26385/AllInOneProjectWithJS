@@ -1,11 +1,13 @@
 ﻿using AllInOneProject.Data;
 using AllInOneProject.Models;
 using AllInOneProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AllInOneProject.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;

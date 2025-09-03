@@ -1,4 +1,5 @@
 ﻿using AllInOneProject.DTOs;
+using AllInOneProject.Models;
 
 namespace AllInOneProject.Repositories
 {
@@ -7,5 +8,6 @@ namespace AllInOneProject.Repositories
         Task<int> SaveSalesDataAsync(SalesMasterRequest request);
         Task<int> UpdateSalesDataAsync(SalesMasterRequest request);
         Task<int> DeleteSalesDataAsync(int id);
+        Task<List<SaleDto>> GetSaleDataListAsync();
     }
 }

@@ -78,5 +78,10 @@ namespace AllInOneProject.Services
                 };
             }
         }
+
+        public async Task<List<SaleDto>> GetSaleDataListAsync()
+        {
+            return await _repository.GetSaleDataListAsync();
+        }
     }
 }

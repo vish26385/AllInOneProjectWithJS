@@ -35,12 +35,15 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="Item">Items</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Party" asp-action="Party">Parties</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sale" asp-action="Sale">Sales</a>
-                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Party" asp-action="Party">Parties</a>
+                                </li>                           
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sale" asp-action="Sale">Sales</a>
+                                </li>
+                            }
                         }
                     </ul>
                     <ul class="navbar-nav ms-auto">

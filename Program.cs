@@ -15,6 +15,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login"; // redirect to your login page if not authenticated
+        options.AccessDeniedPath = "/Account/Login"; // redirect to your login page if not authenticated
         options.LogoutPath = "/Account/Logout";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
         options.SlidingExpiration = true;

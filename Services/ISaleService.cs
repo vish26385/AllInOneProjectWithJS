@@ -8,5 +8,7 @@ namespace AllInOneProject.Services
 
         Task<ServiceResponse<int>> UpdateSalesDataAsync(SalesMasterRequest request);
         Task<ServiceResponse<int>> DeleteSalesDataAsync(int id);
+
+        Task<List<SaleDto>> GetSaleDataListAsync();
     }
 }

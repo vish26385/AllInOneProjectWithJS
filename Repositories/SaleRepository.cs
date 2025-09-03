@@ -156,5 +156,34 @@ namespace AllInOneProject.Repositories
                 throw;
             }
         }
+
+        public async Task<List<SaleDto>> GetSaleDataListAsync()
+        {
+            var saleData = await _context.SalesMas
+                .Include(sm => sm.PartyMaster)
+                .Include(sm => sm.salesDetails)
+                    .ThenInclude(sd => sd.ItemMaster)
+                .Select(sm => new SaleDto
+                {
+                    Id = sm.Id,
+                    SaleDate = sm.SalesDate.ToString("yyyy-MM-dd"),
+                    DueDays = sm.DueDays,
+                    DueDate = sm.DueDate.ToString("yyyy-MM-dd"),
+                    PartyId = sm.PartyId,
+                    PartyName = sm.PartyMaster.Name,
+                    Qty = sm.salesDetails.Sum(sd => sd.Qty),
+                    Amount = sm.salesDetails.Sum(sd => sd.Qty * sd.ItemMaster.Price),
+                    salesDetails = sm.salesDetails.Select(sd => new SaleDetailDto
+                    {
+                        Id = sd.Id,
+                        itemId = sd.itemId,
+                        SalesMasterId = sd.SalesMasterId,
+                        Qty = sd.Qty
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return saleData;
+        }
     }
 }
