@@ -1,25 +1,90 @@
-﻿<table class="table" id="saleDetailTable">
-    <thead>
-        <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Rate</th>
-            <th>Amount</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <input type="hidden" class="saleDetailId" />
-            <input type="hidden" class="saleMasterId" />
-            <td><select class="itemId" style="width:100%;"><option value=0>-- Select Item --</option></select></td>
-            <td><input type="number" class="itemQty" /></td>
-            <td><input type="number" readonly class="itemPrice" /></td>
-            <td><input type="number" readonly class="itemAmount" /></td>
-            <td>
-                <button type="button" class="addNewRow" onclick="addNewRow()">Add New Row</button>
-                <button type="button" class="deleteRow" onclick="deleteRow(this)">Delete Row</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+﻿<div class="sales-list-container" style="margin-top: 20px;">
+    
+    <table id="saleDetailTable"
+           style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        <thead style="background-color: #f5f5f5; text-align: left;">
+            <tr>
+                <th style="padding: 12px; border-bottom: 2px solid #e0e0e0;">Item</th>
+                <th style="padding: 12px; border-bottom: 2px solid #e0e0e0; width: 100px;">Qty</th>
+                <th style="padding: 12px; border-bottom: 2px solid #e0e0e0; width: 120px;">Rate</th>
+                <th style="padding: 12px; border-bottom: 2px solid #e0e0e0; width: 150px;">Amount</th>
+                <th style="padding: 12px; border-bottom: 2px solid #e0e0e0; width: 180px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <input type="hidden" class="saleDetailId" />
+                <input type="hidden" class="saleMasterId" />
+
+                <td style="padding: 8px; width: 20%;">
+                    <select class="itemId" style="width: 100%; padding: 6px 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="0">-- Select Item --</option>
+                    </select>
+                </td>
+                <td style="padding: 8px; width: 20%;">
+                    <input type="number" class="itemQty" style="width: 100%; padding: 6px 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </td>
+                <td style="padding: 8px; width: 20%;">
+                    <input type="number" readonly class="itemPrice" style="width: 100%; padding: 6px 8px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9;" />
+                </td>
+                <td style="padding: 8px; width: 20%;">
+                    <input type="number" readonly class="itemAmount" style="width: 100%; padding: 6px 8px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9;" />
+                </td>
+                <td style="padding: 8px; width: 20%;">
+                    <button type="button" class="addNewRow" onclick="addNewRow()"
+                            style="padding: 6px 12px; background: #4CAF50; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; margin-right: 5px;">
+                        + Add
+                    </button>
+                    <button type="button" class="deleteRow" onclick="deleteRow(this)"
+                            style="padding: 6px 12px; background: #f44336; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                        ✕ Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    #saleDetailTable tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    #saleDetailTable th {
+        font-weight: 600;
+        color: #444;
+    }
+
+    #saleDetailTable td input:read-only {
+        cursor: not-allowed;
+    }
+
+    #saleDetailTable button:hover {
+        opacity: 0.9;
+    }
+
+    @@media (max-width: 768px) {
+        #saleDetailTable, #saleDetailTable thead, #saleDetailTable tbody, #saleDetailTable th, #saleDetailTable td, #saleDetailTable tr {
+            display: block;
+            width: 100%;
+        }
+
+            #saleDetailTable thead tr {
+                display: none;
+            }
+
+            #saleDetailTable td {
+                padding: 10px;
+                text-align: right;
+                position: relative;
+            }
+
+                #saleDetailTable td::before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 10px;
+                    font-weight: 600;
+                    color: #555;
+                }
+    }
+</style>
