@@ -1,9 +1,13 @@
 ﻿@model AllInOneProject.DTOs.PartyMasterRequest
 
-<h2>Parties</h2>
-<form method="post">
+<h2 class="mb-4">Parties</h2>
+
+<form method="post" class="mb-4">
     @Html.Partial("_PartyFormPartial")
-    <hr />
 </form>
-<p>@ViewBag.Message</p>
+
+<div id="partyMessage" class="mb-3 text-success fw-semibold">
+    @ViewBag.Message
+</div>
+
 @Html.Partial("_PartyListPartial")

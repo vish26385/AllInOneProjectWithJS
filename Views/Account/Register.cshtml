@@ -1,34 +1,37 @@
-﻿<h2>Register</h2>
+﻿<div class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
+    <div class="card shadow-lg border-0 rounded-4" style="width: 420px;">
+        <div class="card-body p-4">
+            <h3 class="text-center mb-4">📝 Register</h3>
 
-<form id="registerForm">
-    <table>
-        <tr>
-            <td><label>Username</label></td>
-        </tr>
-        <tr>
-            <td><input type="text" style="width:100%;" id="registerUsername" placeholder="Enter Username" required /></td>
-        </tr>
-        <tr>
-            <td><label>Email</label></td>
-        </tr>
-        <tr>
-            <td><input type="email" style="width:100%;" id="registerEmail" placeholder="Enter Email" required /></td>
-        </tr>
-        <tr>
-            <td><label>Password</label></td>
-        </tr>
-        <tr>
-            <td><input type="password" style="width:100%;margin-bottom:5px;" id="registerPassword" placeholder="Enter Password" required /></td>
-        </tr>
-        <tr>
-            <td><button type="button" style="width:100%;margin-bottom:5px;" onclick="register()">Register</button></td>
-        </tr>
-        <tr>
-            <td><label>Already member?</label><a href="/Account/Login">Sign in</a></td>
-        </tr>
-    </table>
-</form>
-<div id="registerMessage"></div>
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="registerUsername" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="registerUsername" placeholder="Enter Username" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" placeholder="Enter Email" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="registerPassword" placeholder="Enter Password" required />
+                </div>
+
+                <button type="button" class="btn btn-success w-100 mb-3" onclick="register()">Register</button>
+
+                <div class="text-center">
+                    <span class="small">Already a member?</span>
+                    <a href="/Account/Login" class="text-decoration-none">Sign in</a>
+                </div>
+            </form>
+
+            <div id="registerMessage" class="mt-3 text-center fw-semibold"></div>
+        </div>
+    </div>
+</div>
+
 <script>
     function register() {
         const username = document.getElementById('registerUsername').value;
@@ -37,20 +40,28 @@
 
         fetch('/Account/Register', {
             method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify ({username,email,password})
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
         })
         .then(res => res.json())
         .then(msg => {
-            document.getElementById('registerMessage').innerText = msg;
-            if (msg == "Registered")
-            {
-                window.location.href = '/Account/Login';
+            const msgBox = document.getElementById('registerMessage');
+            msgBox.innerText = msg;
+
+            if (msg === "Registered") {
+                msgBox.classList.remove("text-danger");
+                msgBox.classList.add("text-success");
+                setTimeout(() => {
+                    window.location.href = '/Account/Login';
+                }, 1000);
+            } else {
+                msgBox.classList.remove("text-success");
+                msgBox.classList.add("text-danger");
             }
         });
     }
-    window.onload = function()
-    {
+
+    window.onload = function () {
         document.getElementById('registerUsername')?.focus();
     }
 </script>

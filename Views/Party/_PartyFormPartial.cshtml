@@ -1,15 +1,19 @@
 ﻿@model AllInOneProject.DTOs.PartyMasterRequest
 
-<div>
-    <input type="hidden" name="PartyMaster.Id" value="@Model.PartyMaster?.Id" />
-    <input autofocus type="text" placeholder="Party Name" name="PartyMaster.Name" value="@Model.PartyMaster?.Name" required />
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">@(Model.PartyMaster != null && Model.PartyMaster.Id > 0 ? "Edit Party" : "Add Party")</h5>
 
-    @if (Model.PartyMaster != null && Model.PartyMaster.Id > 0)
-    {
-        <button type="submit" formaction="/Party/UpdateParty">Update</button>
-    }
-    else
-    {
-        <button type="submit" formaction="/Party/SaveParty">Save</button>
-    }
+        <input type="hidden" name="PartyMaster.Id" value="@Model.PartyMaster?.Id" />
+
+        <div class="row g-2">
+            <div class="col-md-8 d-flex">
+                <label for="partyName" class="form-label" style="width:15%">Party Name</label>
+                <input autofocus="" type="text" class="form-control" id="partyName" placeholder="Enter party name" name="PartyMaster.Name" required="">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100" formaction="/Party/SaveParty">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
