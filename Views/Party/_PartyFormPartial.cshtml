@@ -9,11 +9,20 @@
         <div class="row g-2">
             <div class="col-md-8 d-flex">
                 <label for="partyName" class="form-label" style="width:15%">Party Name</label>
-                <input autofocus="" type="text" class="form-control" id="partyName" placeholder="Enter party name" name="PartyMaster.Name" required="">
+                <input autofocus type="text" class="form-control" id="partyName" placeholder="Enter party name" name="PartyMaster.Name" value="@Model.PartyMaster?.Name" required="">
             </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100" formaction="/Party/SaveParty">Save</button>
-            </div>
+            @if (Model.PartyMaster != null && Model.PartyMaster.Id > 0)
+            {
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100" formaction="/Party/UpdateParty">Update</button>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100" formaction="/Party/SaveParty">Save</button>
+                </div>
+            }           
         </div>
     </div>
 </div>
