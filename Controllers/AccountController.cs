@@ -2,6 +2,7 @@
 using AllInOneProject.DTOs;
 using AllInOneProject.Models;
 using AllInOneProject.Repositories;
+using AllInOneProject.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -14,11 +15,11 @@ namespace AllInOneProject.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IAuthRepository _authRepository;
-        public AccountController(ApplicationDbContext context, IAuthRepository authRepository)
+        private readonly IAuthService _authService;
+        public AccountController(ApplicationDbContext context, IAuthService authService)
         {
             _context = context;
-            _authRepository = authRepository;
+            _authService = authService;
         }
 
         public IActionResult Login()
@@ -38,17 +39,19 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var response = await _authRepository.RegisterAsync(request);
+            var response = await _authService.RegisterAsync(request);
 
             if (response == 0)
-                return Json("UserName exists");
-            else
+                return Json("UserName already exists");            
+            else if (response == -1)
+                return Json("Failed to register");
+            else 
                 return Json("Registered");
         }
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            var user = await _authRepository.ForgotPasswordAsync(email);
+            var user = await _authService.ForgotPasswordAsync(email);
             if (user != null)
             {
                 return Json($"Reset link sent to {email}");
@@ -59,7 +62,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] RegisterRequest request)  
         {
-            var response = await _authRepository.LoginAsync(request);
+            var response = await _authService.LoginAsync(request);
 
             if (response == 0)
                 return Json("Invalid Credentials!");
