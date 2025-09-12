@@ -29,9 +29,9 @@ namespace AllInOneProject.Repositories
             return await _context.SalesDet.FirstOrDefaultAsync(x => x.SalesMasterId == id);
         }
 
-        public async Task<int> SaveSalesDataAsync(SalesMasterRequest request)
+        public async Task<int> SaveSaleMasterAsync(SalesMaster saleMaster)
         {
-            if (request == null || request.SalesDetailRequests == null || !request.SalesDetailRequests.Any())
+            if (saleMaster == null || saleMaster.salesDetails == null || !saleMaster.salesDetails.Any())
                 throw new ArgumentException("Invalid sale data.");
 
             int saleMasterId = 0;
@@ -47,10 +47,10 @@ namespace AllInOneProject.Repositories
                         using (var cmd = new SqlCommand("sp_InsertSaleMaster", con, (SqlTransaction)trn))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@SaleDate", request.SaleDate);
-                            cmd.Parameters.AddWithValue("@DueDays", request.DueDays);
-                            cmd.Parameters.AddWithValue("@DueDate", request.DueDate);
-                            cmd.Parameters.AddWithValue("@PartyId", request.PartyId);
+                            cmd.Parameters.AddWithValue("@SaleDate", saleMaster.SalesDate);
+                            cmd.Parameters.AddWithValue("@DueDays", saleMaster.DueDays);
+                            cmd.Parameters.AddWithValue("@DueDate", saleMaster.DueDate);
+                            cmd.Parameters.AddWithValue("@PartyId", saleMaster.PartyId);
                             cmd.Parameters.Add("@SaleMasterId", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                             await cmd.ExecuteNonQueryAsync();
@@ -58,39 +58,23 @@ namespace AllInOneProject.Repositories
                         }
 
                         // Insert SaleDetails
-                        foreach (var item in request.SalesDetailRequests)
+                        foreach (var item in saleMaster.salesDetails)
                         {
                             using var cmdDetail = new SqlCommand("sp_InsertSaleDetail", con, (SqlTransaction)trn);
                             cmdDetail.CommandType = CommandType.StoredProcedure;
                             cmdDetail.Parameters.AddWithValue("@SaleMasterId", saleMasterId);
-                            cmdDetail.Parameters.AddWithValue("@ItemId", item.ItemId);
+                            cmdDetail.Parameters.AddWithValue("@ItemId", item.itemId);
                             cmdDetail.Parameters.AddWithValue("@Qty", item.Qty);
 
                             await cmdDetail.ExecuteNonQueryAsync();
                         }
 
                         await trn.CommitAsync();
-
-                        //var saleMaster = new SalesMaster
-                        //{
-                        //    SalesDate = request.SaleDate,
-                        //    DueDays = request.DueDays,
-                        //    DueDate = request.DueDate,
-                        //    PartyId = request.PartyId,
-                        //    salesDetails = request.SalesDetailRequests.Select(d => new SalesDetail
-                        //    {
-                        //        itemId = d.ItemId,
-                        //        Qty = d.Qty
-                        //    }).ToList()
-                        //};
-
-                        //_context.SalesMas.Add(saleMaster);
-                        //await _context.SaveChangesAsync();
                     }
                     catch
                     {
                         await trn.RollbackAsync();
-                        throw; // rethrow to service/controller
+                        throw; // rethrow to service
                     }
                 }
             }
@@ -98,45 +82,28 @@ namespace AllInOneProject.Repositories
             return saleMasterId;
         }
 
-        public async Task<int> UpdateSalesDataAsync(SalesMasterRequest request)
+        public async Task<int> UpdateSaleMasterAsync(SalesMaster saleMaster, List<int>? deletedDetailIds)
         {
-            if (request == null || request.SalesDetailRequests == null || !request.SalesDetailRequests.Any())
+            if (saleMaster == null)
                 throw new ArgumentException("Invalid sale data.");
 
             try
             {
-                var saleMaster = await GetSaleMasterDataByIdAsync(request.Id);
-                if (saleMaster == null)
+                // Delete sale details if required
+                if (deletedDetailIds != null && deletedDetailIds.Any())
                 {
-                    throw new ArgumentException($"SaleMaster with Id={request.Id} not found.");
-                }
-                saleMaster.SalesDate = request.SaleDate;
-                saleMaster.DueDays = request.DueDays;
-                saleMaster.DueDate = request.DueDate;
-                saleMaster.PartyId = request.PartyId;
-                saleMaster.salesDetails = request.SalesDetailRequests.Select(d => new SalesDetail
-                {
-                    Id = d.Id,
-                    SalesMasterId = d.SaleMasterId,
-                    itemId = d.ItemId,
-                    Qty = d.Qty
-                }).ToList();
-
-                // Delete sale details in DeletedSaleDetailIds
-                if (request.DeletedSaleDetailIds != null && request.DeletedSaleDetailIds.Any())
-                {
-                    var detailsToDelete = _context.SalesDet.Where(d => request.DeletedSaleDetailIds.Contains(d.Id));
-
+                    var detailsToDelete = _context.SalesDet.Where(d => deletedDetailIds.Contains(d.Id));
                     _context.SalesDet.RemoveRange(detailsToDelete);
                 }
 
+                _context.SalesMas.Update(saleMaster);
                 await _context.SaveChangesAsync();
 
                 return saleMaster.Id;
             }
             catch
             {
-                throw; // rethrow to service/controller
+                throw; // Rethrow to service
             }
         }
 

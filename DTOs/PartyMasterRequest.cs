@@ -4,7 +4,7 @@ namespace AllInOneProject.DTOs
 {
     public class PartyMasterRequest
     {
-        public PartyMaster PartyMaster { get; set; }
-        public List<PartyMaster> partyMasters { get; set; }
+        public int Id { get; set; }     // used for update
+        public string Name { get; set; }
     }
 }

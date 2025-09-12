@@ -5,11 +5,11 @@ namespace AllInOneProject.Services
 {
     public interface IPartyService
     {
-        Task<ServiceResponse<List<PartyMaster>>> GetAllPartiesAsync();
+        Task<ServiceResponse<PartyMasterDTO>> GetPartyByIdAsync(int id);
 
-        Task<ServiceResponse<int>> SavePartyAsync(PartyMasterRequest request);
+        Task<ServiceResponse<List<PartyMasterDTO>>> GetAllPartiesAsync();
 
-        Task<PartyMasterRequest> GetEditPartyModelAsync(int id);
+        Task<ServiceResponse<int>> SavePartyAsync(PartyMasterRequest request);        
 
         Task<ServiceResponse<int>> UpdatePartyAsync(PartyMasterRequest request);
 

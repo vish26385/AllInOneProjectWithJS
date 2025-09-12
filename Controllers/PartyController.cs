@@ -2,6 +2,7 @@
 using AllInOneProject.DTOs;
 using AllInOneProject.Models;
 using AllInOneProject.Services;
+using AllInOneProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -30,17 +31,29 @@ namespace AllInOneProject.Controllers
                 return RedirectToAction("Login", "Account");
 
             var response = await _partyService.GetAllPartiesAsync();
-            var im = new PartyMasterRequest
+            var vm = new PartyMasterViewModel
             {
-                partyMasters = response.Data
+                partyMasters = response.Data?.Select(dto => new PartyMasterViewModel
+                {
+                    Id = dto.Id,
+                    Name = dto.Name
+                }).ToList()
             };
-            return View(im);
+
+            return View(vm);
         }
+
         [HttpPost]
-        public async Task<IActionResult> SaveParty(PartyMasterRequest request)
+        public async Task<IActionResult> SaveParty(PartyMasterViewModel model)
         {
             if (UserId == null)
                 return RedirectToAction("Login", "Account");
+
+            // Map ViewModel → DTO //User PartyMasterRequest for Save and Update
+            var request = new PartyMasterRequest
+            {
+               Name = model.Name               
+            };
 
             var response = await _partyService.SavePartyAsync(request);
 
@@ -48,16 +61,41 @@ namespace AllInOneProject.Controllers
             return RedirectToAction("Party");
         }
         [HttpPost]
-        public async Task<IActionResult> EditParty(int Id)
+        public async Task<IActionResult> EditParty(int id)
         {
-            var model = await _partyService.GetEditPartyModelAsync(Id);
-            return View("Party", model); // return same view
-        }
-        [HttpPost]
-        public async Task<IActionResult> UpdateParty(PartyMasterRequest request)
-        {
-            if(UserId == null)
+            if (UserId == null)
                 return RedirectToAction("Login", "Account");
+
+            // Map ViewModel → DTO //User PartyMasterDTO for GetPartyByIdAsync and GetAllPartiesAsync
+            var partyDto = await _partyService.GetPartyByIdAsync(id);
+            var partiesDto = await _partyService.GetAllPartiesAsync();
+
+            var vm = new PartyMasterViewModel
+            {
+                Id = partyDto.Data.Id,
+                Name = partyDto.Data.Name,
+                partyMasters = partiesDto.Data?.Select(dto => new PartyMasterViewModel
+                {
+                    Id = dto.Id,
+                    Name = dto.Name
+                }).ToList()
+            };
+
+            return View("Party",vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateParty(PartyMasterViewModel model)
+        {
+            if (UserId == null)
+                return RedirectToAction("Login", "Account");
+
+            // Map ViewModel → DTO
+            var request = new PartyMasterRequest
+            {
+                Id = model.Id,
+                Name = model.Name                
+            };
 
             var response = await _partyService.UpdatePartyAsync(request);
 

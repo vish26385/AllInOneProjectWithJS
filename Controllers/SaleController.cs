@@ -179,6 +179,7 @@ namespace AllInOneProject.Controllers
 
             return Json(new { success = response.Success, message = response.Message, id = response.Data });    
         }
+
         [HttpPost]
         public async Task<IActionResult> DeleteSalesData(int id)
         {
