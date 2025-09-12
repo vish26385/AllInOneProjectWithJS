@@ -20,24 +20,24 @@ namespace AllInOneProject.Repositories
             _context = context;
         }
 
-        public async Task<int> InsertItemAsync(ItemRequest request)
+        public async Task<int> InsertItemAsync(Item item)
         {
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("sp_InsertItem", con);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Name", request.Name);
-            cmd.Parameters.AddWithValue("@Price", request.Price);
+            cmd.Parameters.AddWithValue("@Name", item.Name);
+            cmd.Parameters.AddWithValue("@Price", item.Price);
             await con.OpenAsync();
             return await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task<int> UpdateItemAsync(ItemRequest request)
+        public async Task<int> UpdateItemAsync(Item item)
         {
-            var item = await _context.Items.FindAsync(request.Id);
-            if (item != null)
+            var itemexist = await _context.Items.FindAsync(item.Id);
+            if (itemexist != null)
             {
-                item.Name = request.Name;
-                item.Price = request.Price;
+                itemexist.Name = item.Name;
+                itemexist.Price = item.Price;
                 return await _context.SaveChangesAsync();
             }
             return 0;
@@ -105,6 +105,7 @@ namespace AllInOneProject.Repositories
             _context.Carts.Add(cartItem);
             return await _context.SaveChangesAsync();
         }
+
         public async Task<int> RemoveFromCartAsync(int itemId, int userId)
         {
             var cartItem = await _context.Carts.FirstOrDefaultAsync(x => x.ItemId == itemId && x.UserId == userId);

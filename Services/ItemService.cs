@@ -37,7 +37,14 @@ namespace AllInOneProject.Services
                 };
             }
 
-            var result = await _repository.InsertItemAsync(request);
+            // Map DTO → Model(Entity)
+            var item = new Item
+            {
+                Name = request.Name,
+                Price = request.Price
+            };
+
+            var result = await _repository.InsertItemAsync(item);
 
             return new ServiceResponse<int>
             {
@@ -67,7 +74,15 @@ namespace AllInOneProject.Services
                 };
             }
 
-            var result = await _repository.UpdateItemAsync(request);
+            // Map DTO → Model(Entity)
+            var item = new Item
+            {
+                Id = request.Id,
+                Name = request.Name,
+                Price = request.Price
+            };
+
+            var result = await _repository.UpdateItemAsync(item);
 
             if (result == 0)
             {
