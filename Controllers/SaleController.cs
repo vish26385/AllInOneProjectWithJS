@@ -161,8 +161,23 @@ namespace AllInOneProject.Controllers
             var response = await _saleService.SaveSalesDataAsync(request);
 
             if (!response.Success)
-                return StatusCode(500, new { success = false, message = response.Message });
+            {
+                // Map error messages to proper HTTP codes
+                if (response.Message.StartsWith("Invalid argument"))
+                    return BadRequest(new { success = false, message = response.Message });
 
+                if (response.Message.StartsWith("Database error"))
+                    return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                        new { success = false, message = "Database is temporarily unavailable. Please try again later." });
+
+                if (response.Message.StartsWith("Operation error"))
+                    return Conflict(new { success = false, message = response.Message });
+
+                // Fallback for unexpected errors
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { success = false, message = response.Message });
+            }
+               
             return Json(new { success = response.Success, message = response.Message, id = response.Data });              
         }
 
@@ -175,7 +190,22 @@ namespace AllInOneProject.Controllers
             var response = await _saleService.UpdateSalesDataAsync(request);
 
             if (!response.Success)
-                return StatusCode(500, new { success = false, message = response.Message });
+            {
+                // Map error messages to proper HTTP codes
+                if (response.Message.StartsWith("Invalid argument"))
+                    return BadRequest(new { success = false, message = response.Message });
+
+                if (response.Message.StartsWith("Database error"))
+                    return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                        new { success = false, message = "Database is temporarily unavailable. Please try again later." });
+
+                if (response.Message.StartsWith("Operation error"))
+                    return Conflict(new { success = false, message = response.Message });
+
+                // Fallback for unexpected errors
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { success = false, message = response.Message });
+            }
 
             return Json(new { success = response.Success, message = response.Message, id = response.Data });    
         }
@@ -186,9 +216,18 @@ namespace AllInOneProject.Controllers
             var response = await _saleService.DeleteSalesDataAsync(id);
 
             if (!response.Success)
-                return StatusCode(500, new { success = false, message = response.Message });
+            {
+                if (response.Data == false && response.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Case: Nothing deleted
+                    return NotFound(new { success = false, message = response.Message });
+                }
 
-            return Json(new { success = true, message = "Data deleted successfully." });
+                // Case: Some unexpected error
+                return StatusCode(500, new { success = false, message = response.Message });
+            }
+
+            return Json(new { success = true, message = response.Message });
         }
     }
 }

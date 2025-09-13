@@ -9,7 +9,7 @@ namespace AllInOneProject.Repositories
         Task<SalesDetail> GetSaleDetailDataByIdAsync(int id);
         Task<int> SaveSaleMasterAsync(SalesMaster saleMaster);
         Task<int> UpdateSaleMasterAsync(SalesMaster saleMaster, List<int>? deletedDetailIds);
-        Task<int> DeleteSalesDataAsync(int id);
+        Task<bool> DeleteSalesDataAsync(int id);
         Task<List<SaleDto>> GetSaleDataListAsync();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AllInOneProject.DTOs;
 using AllInOneProject.Models;
 using AllInOneProject.Repositories;
+using Microsoft.Data.SqlClient;
 
 namespace AllInOneProject.Services
 {
@@ -47,6 +48,36 @@ namespace AllInOneProject.Services
                     Success = true,
                     Message = "Sales data saved successfully",
                     Data = result
+                };
+            }
+            catch (SqlException sqlEx)
+            {
+                // SQL / DB related errors
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = $"Database error: {sqlEx.Message}",
+                    Data = 0
+                };
+            }
+            catch (InvalidOperationException invEx)
+            {
+                // Invalid operations (e.g. connection not open, invalid state)
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = $"Operation error: {invEx.Message}",
+                    Data = 0
+                };
+            }
+            catch (ArgumentException argEx)
+            {
+                // Wrong arguments passed (already used in repository validation)
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = $"Invalid argument: {argEx.Message}",
+                    Data = 0
                 };
             }
             catch (Exception ex)
@@ -107,6 +138,36 @@ namespace AllInOneProject.Services
                     Data = result
                 };
             }
+            catch (SqlException sqlEx)
+            {
+                // SQL / DB related errors
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = $"Database error: {sqlEx.Message}",
+                    Data = 0
+                };
+            }
+            catch (InvalidOperationException invEx)
+            {
+                // Invalid operations (e.g. connection not open, invalid state)
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = $"Operation error: {invEx.Message}",
+                    Data = 0
+                };
+            }
+            catch (ArgumentException argEx)
+            {
+                // Wrong arguments passed (already used in repository validation)
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = $"Invalid argument: {argEx.Message}",
+                    Data = 0
+                };
+            }
             catch (Exception ex)
             {
                 return new ServiceResponse<int>
@@ -117,12 +178,22 @@ namespace AllInOneProject.Services
                 };
             }
         }
-        public async Task<ServiceResponse<int>> DeleteSalesDataAsync(int id)
+        public async Task<ServiceResponse<bool>> DeleteSalesDataAsync(int id)
         {
             try
             {
                 var result = await _repository.DeleteSalesDataAsync(id);
-                return new ServiceResponse<int>
+                if (!result)
+                {
+                    return new ServiceResponse<bool>
+                    {
+                        Success = false,
+                        Message = $"Sales data with Id {id} not found.",
+                        Data = false
+                    };
+                }
+
+                return new ServiceResponse<bool>
                 {
                     Success = true,
                     Message = "Sales data deleted successfully",
@@ -131,11 +202,11 @@ namespace AllInOneProject.Services
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<bool>
                 {
                     Success = false,
-                    Message = ex.Message,
-                    Data = 0  // e.g., number of rows affected
+                    Message = $"Error deleting sales data: {ex.Message}",
+                    Data = false  // e.g., number of rows affected
                 };
             }
         }

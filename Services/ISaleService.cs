@@ -6,7 +6,7 @@ namespace AllInOneProject.Services
     {
         Task<ServiceResponse<int>> SaveSalesDataAsync(SalesMasterRequest request);
         Task<ServiceResponse<int>> UpdateSalesDataAsync(SalesMasterRequest request);
-        Task<ServiceResponse<int>> DeleteSalesDataAsync(int id);
+        Task<ServiceResponse<bool>> DeleteSalesDataAsync(int id);
         Task<List<SaleDto>> GetSaleDataListAsync();
     }
 }

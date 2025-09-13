@@ -87,27 +87,20 @@ namespace AllInOneProject.Repositories
             if (saleMaster == null)
                 throw new ArgumentException("Invalid sale data.");
 
-            try
+            // Delete sale details if required
+            if (deletedDetailIds != null && deletedDetailIds.Any())
             {
-                // Delete sale details if required
-                if (deletedDetailIds != null && deletedDetailIds.Any())
-                {
-                    var detailsToDelete = _context.SalesDet.Where(d => deletedDetailIds.Contains(d.Id));
-                    _context.SalesDet.RemoveRange(detailsToDelete);
-                }
-
-                _context.SalesMas.Update(saleMaster);
-                await _context.SaveChangesAsync();
-
-                return saleMaster.Id;
+                var detailsToDelete = _context.SalesDet.Where(d => deletedDetailIds.Contains(d.Id));
+                _context.SalesDet.RemoveRange(detailsToDelete);
             }
-            catch
-            {
-                throw; // Rethrow to service
-            }
+
+            _context.SalesMas.Update(saleMaster);
+            await _context.SaveChangesAsync();
+
+            return saleMaster.Id;
         }
 
-        public async Task<int> DeleteSalesDataAsync(int id)
+        public async Task<bool> DeleteSalesDataAsync(int id)
         {
             try
             {
@@ -116,7 +109,7 @@ namespace AllInOneProject.Repositories
 
                 _context.SalesDet.RemoveRange(saleDet);
                 _context.SalesMas.Remove(saleMas);
-                return await _context.SaveChangesAsync();
+                return await _context.SaveChangesAsync() > 0;
             }
             catch
             {
