@@ -8,7 +8,7 @@ namespace AllInOneProject.Repositories
         Task<PartyMaster?> GetPartyByIdAsync(int id);
         Task<List<PartyMaster>> GetAllPartiesAsync();
         Task<int> SavePartyAsync(PartyMaster party);
-        Task<int> UpdatePartyAsync(PartyMaster party);
-        Task<int> DeletePartyAsync(int Id);
+        Task<bool> UpdatePartyAsync(PartyMaster party);
+        Task<bool> DeletePartyAsync(int Id);
     }
 }

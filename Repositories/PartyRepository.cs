@@ -55,7 +55,7 @@ namespace AllInOneProject.Repositories
             return await cmd.ExecuteNonQueryAsync();            
         }
 
-        public async Task<int> UpdatePartyAsync(PartyMaster party)
+        public async Task<bool> UpdatePartyAsync(PartyMaster party)
         {
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("sp_updateParty", con);
@@ -65,17 +65,17 @@ namespace AllInOneProject.Repositories
             cmd.Parameters.AddWithValue("@PartyName", party.Name);
 
             await con.OpenAsync();
-            return await cmd.ExecuteNonQueryAsync();
+            return await cmd.ExecuteNonQueryAsync() > 0;
         }
 
-        public async Task<int> DeletePartyAsync(int Id)
+        public async Task<bool> DeletePartyAsync(int Id)
         {
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("sp_deleteParty", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Id", Id);
             await con.OpenAsync();
-            return await cmd.ExecuteNonQueryAsync();
+            return await cmd.ExecuteNonQueryAsync() > 0;
         }
     }
 }

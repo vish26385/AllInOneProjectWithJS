@@ -173,7 +173,7 @@ namespace AllInOneProject.Services
                 return new ServiceResponse<int>
                 {
                     Success = false,
-                    Message = ex.Message,
+                    Message = $"Error while updating sales data: {ex.Message}",
                     Data = 0
                 };
             }
@@ -188,8 +188,7 @@ namespace AllInOneProject.Services
                     return new ServiceResponse<bool>
                     {
                         Success = false,
-                        Message = $"Sales data with Id {id} not found.",
-                        Data = false
+                        Message = $"Sales data with Id {id} not found."
                     };
                 }
 
@@ -205,8 +204,7 @@ namespace AllInOneProject.Services
                 return new ServiceResponse<bool>
                 {
                     Success = false,
-                    Message = $"Error deleting sales data: {ex.Message}",
-                    Data = false  // e.g., number of rows affected
+                    Message = $"Error deleting sales data: {ex.Message}"
                 };
             }
         }

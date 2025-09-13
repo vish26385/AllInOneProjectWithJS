@@ -83,12 +83,17 @@ namespace AllInOneProject.Controllers
 
             return View("Party",vm);
         }
-
         [HttpPost]
         public async Task<IActionResult> UpdateParty(PartyMasterViewModel model)
         {
             if (UserId == null)
                 return RedirectToAction("Login", "Account");
+
+            if (!ModelState.IsValid)
+            {
+                // If validation fails, return to the same view with error messages
+                return View(model);
+            }
 
             // Map ViewModel → DTO
             var request = new PartyMasterRequest

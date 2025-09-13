@@ -97,11 +97,11 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<int>> UpdatePartyAsync(PartyMasterRequest request)
+        public async Task<ServiceResponse<bool>> UpdatePartyAsync(PartyMasterRequest request)
         {
             if (request == null)
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<bool>
                 {
                     Success = false,
                     Message = "Invalid request."
@@ -110,48 +110,105 @@ namespace AllInOneProject.Services
 
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<bool>
                 {
                     Success = false,
                     Message = "Party name is required."
                 };
             }
 
-            // Map DTO → Entity
-            var party = new PartyMaster
+            try
             {
-                Id = request.Id,
-                Name = request.Name
-            };
-
-            var result = await _partyRepository.UpdatePartyAsync(party);
-
-            return new ServiceResponse<int>
-            {
-                Success = result > 0,
-                Message = result > 0 ? "Party updated successfully" : "No record updated",
-                Data = result
-            };
-        }
-
-        public async Task<ServiceResponse<int>> DeletePartyAsync(int id)
-        {
-            var result = await _partyRepository.DeletePartyAsync(id);
-            if (result == 0)
-            {
-                return new ServiceResponse<int>
+                // Map DTO → Entity
+                var party = new PartyMaster
                 {
-                    Success = false,
-                    Message = "No parties found",
-                    Data = 0
+                    Id = request.Id,
+                    Name = request.Name
+                };
+
+                var result = await _partyRepository.UpdatePartyAsync(party);
+
+                if (!result)
+                {
+                    return new ServiceResponse<bool>
+                    {
+                        Success = false,
+                        Message = $"Party with Id={request.Id} not found or no changes applied."
+                    };
+                }
+
+                return new ServiceResponse<bool>
+                {
+                    Success = true,
+                    Message = "Party updated successfully",
+                    Data = result
                 };
             }
-            return new ServiceResponse<int>
+            catch (SqlException sqlEx)
             {
-                Success = true,
-                Message = "Party deleted successfully",
-                Data = result  // e.g., number of rows affected
-            };
+                // SQL / DB related errors
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Database error: {sqlEx.Message}"
+                };
+            }
+            catch (InvalidOperationException invEx)
+            {
+                // Invalid operations (e.g. connection not open, invalid state)
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Operation error: {invEx.Message}"
+                };
+            }
+            catch (ArgumentException argEx)
+            {
+                // Wrong arguments passed (already used in repository validation)
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Invalid argument: {argEx.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Error while updating party: {ex.Message}"
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> DeletePartyAsync(int id)
+        {
+            try
+            {
+                var result = await _partyRepository.DeletePartyAsync(id);
+                if (!result)
+                {
+                    return new ServiceResponse<bool>
+                    {
+                        Success = false,
+                        Message = $"Party data with Id {id} not found."
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    Success = true,
+                    Message = "Party deleted successfully",
+                    Data = result  // e.g., number of rows affected
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Error deleting party data: {ex.Message}"
+                };
+            }
         }
     }
 }

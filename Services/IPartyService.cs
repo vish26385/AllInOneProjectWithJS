@@ -11,8 +11,8 @@ namespace AllInOneProject.Services
 
         Task<ServiceResponse<int>> SavePartyAsync(PartyMasterRequest request);        
 
-        Task<ServiceResponse<int>> UpdatePartyAsync(PartyMasterRequest request);
+        Task<ServiceResponse<bool>> UpdatePartyAsync(PartyMasterRequest request);
 
-        Task<ServiceResponse<int>> DeletePartyAsync(int id);
+        Task<ServiceResponse<bool>> DeletePartyAsync(int id);
     }
 }
