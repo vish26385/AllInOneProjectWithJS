@@ -31,7 +31,7 @@ namespace AllInOneProject.Controllers
         public async Task<IActionResult> InsertItem([FromBody] ItemRequest request)
         {
             if (UserId == null)
-                return RedirectToAction("Login", "Account");
+                return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.InsertItemAsync(request);
 
@@ -44,7 +44,7 @@ namespace AllInOneProject.Controllers
         public async Task<IActionResult> UpdateItem([FromBody] ItemRequest request)
         {
             if (UserId == null)
-                return RedirectToAction("Login", "Account");
+                return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.UpdateItemAsync(request);
 
@@ -54,10 +54,10 @@ namespace AllInOneProject.Controllers
             return Ok(response);
         }
         [HttpPost]
-        public async Task<IActionResult> DeleteItem(int id)
+        public async Task<IActionResult> DeleteItem([FromBody] int id)
         {
             if (UserId == null)
-                return RedirectToAction("Login", "Account");
+                return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.DeleteItemAsync(id);
 

@@ -20,7 +20,7 @@
 
                     <button type="button" id="btnItemSave" class="btn btn-primary w-100" onclick="insertItem()">Save</button>
                 </form>
-                <div id="itemMessage" class="mt-3 text-center fw-semibold"></div>
+                <div class="notification" id="itemMessage"></div>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
     <div class="card-body">
         <h5 class="card-title mb-3">Item List</h5>
         <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
+            <table class="table table-striped table-hover align-middle" id="itemsTable">
                 <thead class="table-dark">
                     <tr>
                         <th>Name</th>
@@ -44,15 +44,15 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.Name</td>
-                                <td>@item.Price</td>
+                                <td class="itemName">@item.Name</td>
+                                <td class="itemPrice">@item.Price</td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-warning me-1"
-                                            onclick="editItem(@item.Id,'@item.Name',@item.Price)">
+                                            onclick="editItem(@item.Id,'@item.Name',@item.Price, this)">
                                         ✎ Edit
                                     </button>
                                     <button type="button" class="btn btn-sm btn-danger me-1"
-                                            onclick="deleteItem(@item.Id)">
+                                            onclick="deleteItem(@item.Id, this)">
                                         ✕ Delete
                                     </button>
                                     <button type="button" class="btn btn-sm btn-success"
@@ -80,38 +80,90 @@
         const name = document.getElementById('itemName').value;
         const price = document.getElementById('itemPrice').value;
         try {
-            const response = await fetch('/Item/InsertItem', {
+                const response = await fetch('/Item/InsertItem', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, price })
             });
 
+            // 🔹 Handle not logged in
+            if (response.status === 401) {
+                showMessage("Please login first", false);
+                window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle server errors
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Server error:", text);
+                showMessage("Insert failed", false);
+                return;
+            }
+
+            // 🔹 Parse success response
             const result = await response.json();
             showMessage(result.message, result.success);
 
             if (result.success) {
-                setTimeout(() => location.reload(), 800);
+                    // Option A: Reload page (simpler)
+                    // setTimeout(() => location.reload(), 800);
+
+                    // Option B: Add new row dynamically without reload
+                    const table = document.getElementById('itemsTable');
+                    const newRow = table.insertRow();
+                    
+                    newRow.innerHTML = `
+                        <td class="itemName">${result.data.name}</td>
+                        <td class="itemPrice">${parseFloat(result.data.price).toFixed(2)}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning me-1"
+                                    onclick="editItem(${result.data.id}, '${result.data.name}', ${result.data.price}, this)">
+                                ✎ Edit
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger me-1"
+                                    onclick="deleteItem(${result.data.id}, this)">
+                                ✕ Delete
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success"
+                                    onclick="addToCart(${result.data.id})">
+                                + Add To Cart
+                            </button>
+                        </td>
+                    `;
+
+                    // clear inputs
+                    document.getElementById('itemName').value = "";
+                    document.getElementById('itemPrice').value = "";
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
+            showMessage("Unexpected error", false);
         }
     }
 
-    function editItem(id, name, price) {
+    function editItem(id, name, price, btnInRow) {
         document.getElementById('itemId').value = id;
         document.getElementById('itemName').value = name;
         document.getElementById('itemPrice').value = price;
         const btn = document.getElementById('btnItemSave');
-        btn.onclick = updateItem;
+
+        btn._editingRow = btnInRow.closest('tr');
+
+        // Assign new handler, pass btn itself
+        btn.onclick = function () {
+            updateItem(btn); // pass btn to updateItem
+        };
         btn.innerText = "Update";
         btn.classList.remove("btn-primary");
         btn.classList.add("btn-warning");
     }
 
-    async function updateItem() {
+    async function updateItem(btn) {
         const id = document.getElementById('itemId').value;
         const name = document.getElementById('itemName').value;
         const price = document.getElementById('itemPrice').value;
+
         try {
             const response = await fetch('/Item/UpdateItem', {
                 method: 'POST',
@@ -119,31 +171,113 @@
                 body: JSON.stringify({ id, name, price })
             });
 
+            // 🔹 Handle not logged in (Unauthorized)
+            if (response.status === 401) {
+                showMessage("Please login first", false);
+                window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle other server errors (400, 500, etc.)
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Server error:", text);
+                showMessage("Update failed", false);
+                return;
+            }
+
+            // 🔹 Parse JSON if success
             const result = await response.json();
             showMessage(result.message, result.success);
 
             if (result.success) {
-                setTimeout(() => location.reload(), 800);
+                const row = btn._editingRow;
+                if (row.rowIndex >= 0) {
+                    row.querySelector('.itemName').textContent = name;
+                    row.querySelector('.itemPrice').textContent = parseFloat(price).toFixed(2);                
+
+                    row.innerHTML = `
+                        <td class="itemName">${name}</td>
+                        <td class="itemPrice">${parseFloat(price).toFixed(2)}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning me-1"
+                                    onclick="editItem(${id}, '${name}', ${price}, this)">
+                                ✎ Edit
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger me-1"
+                                    onclick="deleteItem(${id}, this)">
+                                ✕ Delete
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success"
+                                    onclick="addToCart(${id})">
+                                + Add To Cart
+                            </button>
+                        </td>
+                    `;
+                }
+
+                document.getElementById('itemName').value = "";
+                document.getElementById('itemPrice').value = "";
+
+                btn.innerText = "Save";
+                btn.classList.remove("btn-warning");
+                btn.classList.add("btn-primary");   
+                
+                btn.onclick = function () {
+                    insertItem(); // pass btn to updateItem
+                };
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
+            showMessage("Unexpected error", false);
         }
     }
 
-    async function deleteItem(id) {
+    async function deleteItem(id, btn) {
         try {
-            const response = await fetch('/Item/DeleteItem?id=' + id, {
-                method: 'POST'
+            const response = await fetch('/Item/DeleteItem', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: id
             });
 
+            // 🔹 Handle not logged in (401 Unauthorized)
+            if (response.status === 401) {
+                showMessage("Please login first", false);
+                window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle other server errors
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Server error:", text);
+                showMessage("Delete failed", false);
+                return;
+            }
+
+            // 🔹 If success, parse JSON
             const result = await response.json();
             showMessage(result.message, result.success);
 
             if (result.success) {
-                setTimeout(() => location.reload(), 800);
+                const row = btn.closest('tr');
+                if (row) row.remove();
+
+                document.getElementById('itemName').value = "";
+                document.getElementById('itemPrice').value = "";
+
+                btn.innerText = "Save";
+                btn.classList.remove("btn-warning");
+                btn.classList.add("btn-primary");
+
+                btn.onclick = function () {
+                    insertItem(); // pass btn to updateItem
+                };
             }
         } catch (error) {
             console.error('Error:', error);
+            showMessage("Unexpected error", false);
         }
     }
 
@@ -166,9 +300,20 @@
 
     function showMessage(message, success) {
         const msgBox = document.getElementById('itemMessage');
-        msgBox.innerText = message;
-        msgBox.classList.remove("text-danger", "text-success");
-        msgBox.classList.add(success ? "text-success" : "text-danger");
+              msgBox.innerText = message;
+
+              // background color based on success/failure
+              msgBox.style.backgroundColor = success ? "#4BB543" : "#DC3545";
+
+              // trigger animation
+              msgBox.classList.remove("show");
+              void msgBox.offsetWidth; // reflow hack to restart animation
+              msgBox.classList.add("show");
+
+              // auto hide after 3s
+              setTimeout(() => {
+                  msgBox.classList.remove("show");
+              }, 2000);
     }
 
     window.onload = function () {

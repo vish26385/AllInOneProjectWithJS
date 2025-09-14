@@ -17,11 +17,11 @@ namespace AllInOneProject.Services
             _repository = repository;
         }
 
-        public async Task<ServiceResponse<int>> InsertItemAsync(ItemRequest request)
+        public async Task<ServiceResponse<Item>> InsertItemAsync(ItemRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<Item>
                 {
                     Success = false,
                     Message = "Item name is required."
@@ -30,35 +30,65 @@ namespace AllInOneProject.Services
 
             if (request.Price <= 0)
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<Item>
                 {
                     Success = false,
                     Message = "Price must be greater than zero."
                 };
             }
 
-            // Map DTO → Model(Entity)
-            var item = new Item
+            try
             {
-                Name = request.Name,
-                Price = request.Price
-            };
+                // Map DTO → Model(Entity)
+                var item = new Item
+                {
+                    Name = request.Name,
+                    Price = request.Price
+                };
 
-            var result = await _repository.InsertItemAsync(item);
+                var result = await _repository.InsertItemAsync(item);
 
-            return new ServiceResponse<int>
+                return new ServiceResponse<Item>
+                {
+                    Success = true,
+                    Message = "Item inserted successfully",
+                    Data = result  // e.g., number of rows affected or new ItemId
+                };
+            }
+            catch (SqlException ex) // database-specific errors
             {
-                Success = true,
-                Message = "Item inserted successfully",
-                Data = result  // e.g., number of rows affected or new ItemId
-            };
+                // log ex (Serilog, NLog, etc.)
+                return new ServiceResponse<Item>
+                {
+                    Success = false,
+                    Message = "A database error occurred while inserting the item."
+                };
+            }
+            catch (Exception ex) // fallback for unexpected errors
+            {
+                // log ex
+                return new ServiceResponse<Item>
+                {
+                    Success = false,
+                    Message = "An unexpected error occurred while inserting the item."
+                };
+            }
         }
 
-        public async Task<ServiceResponse<int>> UpdateItemAsync(ItemRequest request)
+        public async Task<ServiceResponse<bool>> UpdateItemAsync(ItemRequest request)
         {
+            if (!await _repository.ExistsAsync(request.Id))
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Item with Id {request.Id} not found."
+                };
+            }
+
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<bool>
                 {
                     Success = false,
                     Message = "Item name is required."
@@ -67,61 +97,74 @@ namespace AllInOneProject.Services
 
             if (request.Price <= 0)
             {
-                return new ServiceResponse<int>
+                return new ServiceResponse<bool>
                 {
                     Success = false,
                     Message = "Price must be greater than zero."
                 };
             }
 
-            // Map DTO → Model(Entity)
-            var item = new Item
+            try
             {
-                Id = request.Id,
-                Name = request.Name,
-                Price = request.Price
-            };
-
-            var result = await _repository.UpdateItemAsync(item);
-
-            if (result == 0)
-            {
-                return new ServiceResponse<int>
+                // Map DTO → Model(Entity)
+                var item = new Item
                 {
-                    Success = false,
-                    Message = "No items found",
-                    Data = 0
+                    Id = request.Id,
+                    Name = request.Name,
+                    Price = request.Price
+                };
+
+                var result = await _repository.UpdateItemAsync(item);
+
+                return new ServiceResponse<bool>
+                {
+                    Success = true,
+                    Message = "Item updated successfully",
+                    Data = result  // e.g., number of rows affected
                 };
             }
-
-            return new ServiceResponse<int>
+            catch (Exception ex)
             {
-                Success = true,
-                Message = "Item updated successfully",
-                Data = result  // e.g., number of rows affected
-            };
+                // log exception here
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Error updating item: {ex.Message}"
+                };
+            }
         }
 
-        public async Task<ServiceResponse<int>> DeleteItemAsync(int id)
+        public async Task<ServiceResponse<bool>> DeleteItemAsync(int id)
         {
-            var result = await _repository.DeleteItemAsync(id);
-
-            if (result == 0)
+            try
             {
-                return new ServiceResponse<int>
+                var result = await _repository.DeleteItemAsync(id);
+
+                if (!result)
                 {
-                    Success = false,
-                    Message = "No items found",
-                    Data = 0
+                    return new ServiceResponse<bool>
+                    {
+                        Success = false,
+                        Message = $"Item with Id {id} not found."
+                    };
+                }
+
+                return new ServiceResponse<bool>
+                {
+                    Success = true,
+                    Message = "Item deleted successfully",
+                    Data = result  // e.g., number of rows affected
                 };
             }
-
-            return new ServiceResponse<int>
+            catch (Exception ex)
             {
-                Success = true,
-                Message = "Item deleted successfully",
-                Data = result  // e.g., number of rows affected
-            };
+                // log exception
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Error deleting item: {ex.Message}"
+                };
+            }
         }
 
         public async Task<ServiceResponse<List<Item>>> GetAllItemsAsync()
@@ -145,6 +188,7 @@ namespace AllInOneProject.Services
                 Data = items
             };
         }
+
         public async Task<ServiceResponse<Item>> GetItemByIdAsync(int id)
         {
             var result = await _repository.GetItemByIdAsync(id);
@@ -186,6 +230,7 @@ namespace AllInOneProject.Services
                 Data = cartItems
             };
         }
+
         public async Task<ServiceResponse<int>> AddToCartAsync(int itemId, int userId)
         {
             var result = await _repository.AddToCartAsync(itemId, userId);
@@ -205,6 +250,7 @@ namespace AllInOneProject.Services
                 Data = result  // e.g., number of rows affected
             };
         }
+
         public async Task<ServiceResponse<int>> RemoveFromCartAsync(int itemId, int userId)
         {
             var result = await _repository.RemoveFromCartAsync(itemId, userId);

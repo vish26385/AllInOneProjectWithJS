@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -37,4 +37,39 @@ footer {
     color: #adb5bd;
     padding: 15px 0;
     margin-top: auto; /* push footer to bottom */
+}
+
+.notification {
+    position: fixed;
+    top: 5px;
+    right: 20px;
+    background-color: #4BB543;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 9999;
+    opacity: 0; /* hidden by default */
+    pointer-events: none; /* no click blocking */
+    transition: opacity 0.5s ease-in-out;
+}
+
+    .notification.show {
+        opacity: 1; /* 👈 notification is faintly visible */
+        pointer-events: auto;
+        animation: fadeout 3s forwards; /* runs when shown */
+    }
+
+@keyframes fadeout {
+    0% {
+        opacity: 1;
+    }
+    /* 👈 start faint */
+    80% {
+        opacity: 1;
+    }
+    /* 👈 stay faint */
+    100% {
+        opacity: 0;
+    }
+    /* 👈 fade out to invisible */
 }

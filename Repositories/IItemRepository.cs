@@ -6,9 +6,10 @@ namespace AllInOneProject.Repositories
 {
     public interface IItemRepository
     {
-        Task<int> InsertItemAsync(Item item);
-        Task<int> UpdateItemAsync(Item item);
-        Task<int> DeleteItemAsync(int id);
+        Task<bool> ExistsAsync(int id);
+        Task<Item> InsertItemAsync(Item item);
+        Task<bool> UpdateItemAsync(Item item);
+        Task<bool> DeleteItemAsync(int id);
         Task<Item?> GetItemByIdAsync(int id);
         Task<List<Item>> GetAllItemsAsync();
         Task<List<Item>> GetUserCartItemsAsync(int userId);

@@ -20,38 +20,43 @@ namespace AllInOneProject.Repositories
             _context = context;
         }
 
-        public async Task<int> InsertItemAsync(Item item)
+        public async Task<bool> ExistsAsync(int id)
         {
-            using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_InsertItem", con);
+            return await _context.Items.AnyAsync(x => x.Id == id);
+        }
+
+        public async Task<Item> InsertItemAsync(Item item)
+        {
+            await using var con = new SqlConnection(_connectionString);
+            await using var cmd = new SqlCommand("sp_InsertItem", con);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Name", item.Name);
-            cmd.Parameters.AddWithValue("@Price", item.Price);
+            cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100).Value = item.Name;
+            cmd.Parameters.Add("@Price", SqlDbType.Decimal).Value = item.Price;
+            // Add output parameter for new Id
+            var idParam = cmd.Parameters.Add("@Id", SqlDbType.Int);
+            idParam.Direction = ParameterDirection.Output;
             await con.OpenAsync();
-            return await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
+            // Set the generated Id back on the entity
+            item.Id = (int)idParam.Value;
+
+            return item;
         }
 
-        public async Task<int> UpdateItemAsync(Item item)
+        public async Task<bool> UpdateItemAsync(Item item)
         {
-            var itemexist = await _context.Items.FindAsync(item.Id);
-            if (itemexist != null)
-            {
-                itemexist.Name = item.Name;
-                itemexist.Price = item.Price;
-                return await _context.SaveChangesAsync();
-            }
-            return 0;
+            // Attach and mark entity as modified
+            _context.Entry(item).State = EntityState.Modified;
+            return await _context.SaveChangesAsync() > 0;            
         }
 
-        public async Task<int> DeleteItemAsync(int id)
+        public async Task<bool> DeleteItemAsync(int id)
         {
-            var item = await _context.Items.FindAsync(id);
-            if (item != null)
-            {
-                _context.Items.Remove(item);
-                return await _context.SaveChangesAsync();
-            }
-            return 0;
+            var item = await GetItemByIdAsync(id);
+            if (item == null)
+                return false;
+            _context.Items.Remove(item);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<List<Item>> GetAllItemsAsync()
