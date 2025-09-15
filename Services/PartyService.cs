@@ -70,31 +70,33 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<int>> SavePartyAsync(PartyMasterRequest request)
+        public async Task<ServiceResponse<PartyMaster>> SavePartyAsync(PartyMasterRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Name))
+            try
             {
-                return new ServiceResponse<int>
+                var party = new PartyMaster
                 {
-                    Success = false,
-                    Message = "Party name is required."
+                    Name = request.Name
+                };
+
+                var result = await _partyRepository.SavePartyAsync(party);
+
+                return new ServiceResponse<PartyMaster>
+                {
+                    Success = true,
+                    Message = "Party saved successfully",
+                    Data = result
                 };
             }
-
-            // Map DTO → Model(Entity)
-            var party = new PartyMaster
+            catch (Exception ex)
             {
-                Name = request.Name
-            };
-
-            var result = await _partyRepository.SavePartyAsync(party);
-
-            return new ServiceResponse<int>
-            {
-                Success = result > 0,
-                Message = result > 0 ? "Party saved successfully" : "Failed to save party",
-                Data = result
-            };
+                // log exception here
+                return new ServiceResponse<PartyMaster>
+                {
+                    Success = false,
+                    Message = $"Error updating party: {ex.Message}"
+                };
+            }
         }
 
         public async Task<ServiceResponse<bool>> UpdatePartyAsync(PartyMasterRequest request)
@@ -104,7 +106,7 @@ namespace AllInOneProject.Services
                 return new ServiceResponse<bool>
                 {
                     Success = false,
-                    Message = "Invalid request."
+                    Message = "Invalid request data."
                 };
             }
 

@@ -33,6 +33,16 @@ namespace AllInOneProject.Controllers
             if (UserId == null)
                 return Unauthorized(new { message = "User not logged in" });
 
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+
+                return BadRequest(new { success = false, message = string.Join("\n", errors) });
+            }
+
             var response = await _itemService.InsertItemAsync(request);
 
             if (!response.Success)
@@ -45,6 +55,16 @@ namespace AllInOneProject.Controllers
         {
             if (UserId == null)
                 return Unauthorized(new { message = "User not logged in" });
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+
+                return BadRequest(new { success = false, message = string.Join("\n", errors) });
+            }
 
             var response = await _itemService.UpdateItemAsync(request);
 

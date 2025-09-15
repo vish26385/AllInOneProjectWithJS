@@ -7,7 +7,7 @@ namespace AllInOneProject.Repositories
     {
         Task<PartyMaster?> GetPartyByIdAsync(int id);
         Task<List<PartyMaster>> GetAllPartiesAsync();
-        Task<int> SavePartyAsync(PartyMaster party);
+        Task<PartyMaster> SavePartyAsync(PartyMaster party);
         Task<bool> UpdatePartyAsync(PartyMaster party);
         Task<bool> DeletePartyAsync(int Id);
     }

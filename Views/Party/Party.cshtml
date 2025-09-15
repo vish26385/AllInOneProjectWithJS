@@ -1,7 +1,18 @@
 ﻿@* @model AllInOneProject.ViewModels.PartyMasterViewModel
  *@
 <h2 class="mb-4">Parties</h2>
+@if (TempData["Message"] != null)
+{
+    <div class="notification show" id="notifyMsg">
+        @(TempData["Message"])
+    </div>
 
+    <script>
+        setTimeout(() => {
+            document.getElementById("notifyMsg").classList.remove("show");
+        }, 2000); // stay 3s before hiding
+    </script>
+}
 <form method="post" class="mb-4">
     @Html.Partial("_PartyFormPartial")
 </form>
@@ -11,3 +22,4 @@
 </div>
 
 @Html.Partial("_PartyListPartial")
+

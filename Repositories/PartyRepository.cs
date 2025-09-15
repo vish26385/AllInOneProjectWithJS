@@ -45,14 +45,21 @@ namespace AllInOneProject.Repositories
             return parties;
         }
 
-        public async Task<int> SavePartyAsync(PartyMaster party)
+        public async Task<PartyMaster> SavePartyAsync(PartyMaster party)
         {
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("sp_insertParty", con);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@PartyName", party.Name);
+            cmd.Parameters.Add("@PartyName", SqlDbType.NVarChar, 100).Value = party.Name;
+            // Add output parameter for new Id
+            var idParam = cmd.Parameters.Add("@Id", SqlDbType.Int);
+            idParam.Direction = ParameterDirection.Output;
             await con.OpenAsync();
-            return await cmd.ExecuteNonQueryAsync();            
+            await cmd.ExecuteNonQueryAsync();
+            // Set the generated Id back on the entity
+            party.Id = (int)idParam.Value;
+
+            return party;
         }
 
         public async Task<bool> UpdatePartyAsync(PartyMaster party)

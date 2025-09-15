@@ -78,7 +78,8 @@
 <script>
     async function insertItem() {
         const name = document.getElementById('itemName').value;
-        const price = document.getElementById('itemPrice').value;
+        const price = parseFloat(document.getElementById('itemPrice').value);
+       
         try {
                 const response = await fetch('/Item/InsertItem', {
                 method: 'POST',
@@ -90,6 +91,13 @@
             if (response.status === 401) {
                 showMessage("Please login first", false);
                 window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle validation / bad request errors (400)
+            if (response.status === 400) {
+                const errorResult = await response.json();
+                showMessage(errorResult.message || "Validation failed", false);
                 return;
             }
 
@@ -162,7 +170,7 @@
     async function updateItem(btn) {
         const id = document.getElementById('itemId').value;
         const name = document.getElementById('itemName').value;
-        const price = document.getElementById('itemPrice').value;
+        const price = parseFloat(document.getElementById('itemPrice').value);
 
         try {
             const response = await fetch('/Item/UpdateItem', {
@@ -175,6 +183,13 @@
             if (response.status === 401) {
                 showMessage("Please login first", false);
                 window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle validation / bad request errors (400)
+            if (response.status === 400) {
+                const errorResult = await response.json();
+                showMessage(errorResult.message || "Validation failed", false);
                 return;
             }
 
@@ -267,11 +282,12 @@
                 document.getElementById('itemName').value = "";
                 document.getElementById('itemPrice').value = "";
 
-                btn.innerText = "Save";
-                btn.classList.remove("btn-warning");
-                btn.classList.add("btn-primary");
+                const btnSave = document.getElementById('btnItemSave');
+                btnSave.innerText = "Save";
+                btnSave.classList.remove("btn-warning");
+                btnSave.classList.add("btn-primary");
 
-                btn.onclick = function () {
+                btnSave.onclick = function () {
                     insertItem(); // pass btn to updateItem
                 };
             }

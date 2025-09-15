@@ -57,7 +57,7 @@ namespace AllInOneProject.Controllers
 
             var response = await _partyService.SavePartyAsync(request);
 
-            ViewBag.Message = response.Message;
+            TempData["Message"] = response.Message;
             return RedirectToAction("Party");
         }
         [HttpPost]
@@ -89,13 +89,6 @@ namespace AllInOneProject.Controllers
             if (UserId == null)
                 return RedirectToAction("Login", "Account");
 
-            if (!ModelState.IsValid)
-            {
-                // If validation fails, return to the same view with error messages
-                return View(model);
-            }
-
-            // Map ViewModel → DTO
             var request = new PartyMasterRequest
             {
                 Id = model.Id,
@@ -104,7 +97,7 @@ namespace AllInOneProject.Controllers
 
             var response = await _partyService.UpdatePartyAsync(request);
 
-            ViewBag.Message = response.Message;
+            TempData["Message"] = response.Message;
             return RedirectToAction("Party");
         }
         [HttpPost]
@@ -115,7 +108,7 @@ namespace AllInOneProject.Controllers
 
             var response = await _partyService.DeletePartyAsync(Id);
 
-            ViewBag.Message = response.Message;
+            TempData["Message"] = response.Message;
             return RedirectToAction("Party");
         }
     }

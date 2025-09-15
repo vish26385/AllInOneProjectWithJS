@@ -19,31 +19,13 @@ namespace AllInOneProject.Services
 
         public async Task<ServiceResponse<Item>> InsertItemAsync(ItemRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Name))
-            {
-                return new ServiceResponse<Item>
-                {
-                    Success = false,
-                    Message = "Item name is required."
-                };
-            }
-
-            if (request.Price <= 0)
-            {
-                return new ServiceResponse<Item>
-                {
-                    Success = false,
-                    Message = "Price must be greater than zero."
-                };
-            }
-
             try
             {
                 // Map DTO → Model(Entity)
                 var item = new Item
                 {
                     Name = request.Name,
-                    Price = request.Price
+                    Price = request.Price ?? 0
                 };
 
                 var result = await _repository.InsertItemAsync(item);
@@ -85,25 +67,7 @@ namespace AllInOneProject.Services
                     Message = $"Item with Id {request.Id} not found."
                 };
             }
-
-            if (string.IsNullOrWhiteSpace(request.Name))
-            {
-                return new ServiceResponse<bool>
-                {
-                    Success = false,
-                    Message = "Item name is required."
-                };
-            }
-
-            if (request.Price <= 0)
-            {
-                return new ServiceResponse<bool>
-                {
-                    Success = false,
-                    Message = "Price must be greater than zero."
-                };
-            }
-
+            
             try
             {
                 // Map DTO → Model(Entity)
@@ -111,7 +75,7 @@ namespace AllInOneProject.Services
                 {
                     Id = request.Id,
                     Name = request.Name,
-                    Price = request.Price
+                    Price = request.Price ?? 0
                 };
 
                 var result = await _repository.UpdateItemAsync(item);

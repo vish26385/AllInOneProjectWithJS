@@ -56,7 +56,7 @@ footer {
     .notification.show {
         opacity: 1; /* 👈 notification is faintly visible */
         pointer-events: auto;
-        animation: fadeout 3s forwards; /* runs when shown */
+        animation: fadeout 3s forwards;
     }
 
 @keyframes fadeout {
