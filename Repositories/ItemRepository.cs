@@ -99,7 +99,7 @@ namespace AllInOneProject.Repositories
             return cartItems;
         }
 
-        public async Task<int> AddToCartAsync(int itemId, int userId)
+        public async Task<Cart> AddToCartAsync(int itemId, int userId)
         {
             var cartItem = new Cart
             {
@@ -108,18 +108,20 @@ namespace AllInOneProject.Repositories
             };
 
             _context.Carts.Add(cartItem);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+
+            return cartItem; // entity with generated Id
         }
 
-        public async Task<int> RemoveFromCartAsync(int itemId, int userId)
+        public async Task<bool> RemoveFromCartAsync(int itemId, int userId)
         {
             var cartItem = await _context.Carts.FirstOrDefaultAsync(x => x.ItemId == itemId && x.UserId == userId);
-            if (cartItem != null)
-            {
-                _context.Carts.Remove(cartItem);
-                return await _context.SaveChangesAsync();
-            }
-            return 0;
+            if (cartItem == null) return false;
+
+            _context.Carts.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

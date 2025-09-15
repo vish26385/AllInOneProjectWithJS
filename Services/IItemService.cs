@@ -12,7 +12,7 @@ namespace AllInOneProject.Services
         Task<ServiceResponse<List<Item>>> GetAllItemsAsync();
         Task<ServiceResponse<Item>> GetItemByIdAsync(int id);
         Task<ServiceResponse<List<Item>>> GetUserCartItemsAsync(int userId);
-        Task<ServiceResponse<int>> AddToCartAsync(int itemId, int userId);
-        Task<ServiceResponse<int>> RemoveFromCartAsync(int itemId, int userId);
+        Task<ServiceResponse<Cart>> AddToCartAsync(int itemId, int userId);
+        Task<ServiceResponse<bool>> RemoveFromCartAsync(int itemId, int userId);
     }
 }

@@ -4,7 +4,7 @@
     <div class="card-body">
         <h5 class="card-title mb-3">Cart Items</h5>
 
-        <div id="cartMessage" class="mb-3 text-success fw-semibold"></div>
+        <div class="notification" id="cartMessage"></div>
 
         <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
@@ -24,7 +24,7 @@
                             <td>@item.Price</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-warning me-1"
-                                        onclick="removeFromCart(@item.Id)">
+                                        onclick="removeFromCart(@item.Id, this)">
                                     Remove
                                 </button>
                             </td>
@@ -43,18 +43,50 @@
 </div>
 
 <script>
-    async function removeFromCart(itemId) {
+    async function removeFromCart(itemId, btn) {
         try {
             const response = await fetch('/Cart/RemoveFromCart?itemId=' + itemId, {
                 method: 'POST'
             });
 
+            // 🔹 Handle not logged in (401 Unauthorized)
+            if (response.status === 401) {
+                showMessage("Please login first", false);
+                window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle server errors
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Server error:", text);
+                showMessage("Insert failed", false);
+                return;
+            }
+
             const result = await response.json();
 
-            document.getElementById('cartMessage').innerText = result.message;
+            const msgBox = document.getElementById('cartMessage');
+              msgBox.innerText = result.message;
+
+              // background color based on success/failure
+              msgBox.style.backgroundColor = result.success ? "#4BB543" : "#DC3545";
+
+              // trigger animation
+              msgBox.classList.remove("show");
+              void msgBox.offsetWidth; // reflow hack to restart animation
+              msgBox.classList.add("show");
+
+              // auto hide after 3s
+              setTimeout(() => {
+                  msgBox.classList.remove("show");
+              }, 2000);
+
+            //document.getElementById('cartMessage').innerText = result.message;
 
             if (result.success) {
-                window.location.href = '/Cart/Cart';
+                const row = btn.closest('tr');
+                if (row) row.remove();
             }
         } catch (error) {
             console.error('Error:', error);

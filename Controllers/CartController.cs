@@ -31,7 +31,7 @@ namespace AllInOneProject.Controllers
         public async Task<IActionResult> AddToCart(int itemId)
         {
             if (UserId == null)
-                return RedirectToAction("Login", "Account");
+                return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.AddToCartAsync(itemId, UserId ?? 0);
 
@@ -44,7 +44,7 @@ namespace AllInOneProject.Controllers
         public async Task<IActionResult> RemoveFromCart(int itemId)
         {
             if (UserId == null)
-                return RedirectToAction("Login", "Account");
+                return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.RemoveFromCartAsync(itemId, UserId ?? 0);
 

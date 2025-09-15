@@ -303,6 +303,21 @@
                 method: 'POST'
             });
 
+            // 🔹 Handle not logged in (401 Unauthorized)
+            if (response.status === 401) {
+                showMessage("Please login first", false);
+                window.location.href = "/Account/Login";
+                return;
+            }
+
+            // 🔹 Handle server errors
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Server error:", text);
+                showMessage("Insert failed", false);
+                return;
+            }
+
             const result = await response.json();
             showMessage(result.message, result.success);
 

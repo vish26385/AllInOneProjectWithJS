@@ -195,44 +195,70 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<int>> AddToCartAsync(int itemId, int userId)
+        public async Task<ServiceResponse<Cart>> AddToCartAsync(int itemId, int userId)
         {
-            var result = await _repository.AddToCartAsync(itemId, userId);
-            if (result == 0)
+            try
             {
-                return new ServiceResponse<int>
+                var result = await _repository.AddToCartAsync(itemId, userId);
+                if (result == null)
                 {
-                    Success = false,
-                    Message = "Failed to add item to cart",
-                    Data = 0
+                    return new ServiceResponse<Cart>
+                    {
+                        Success = false,
+                        Message = "Failed to add item to cart",
+                        Data = null
+                    };
+                }
+                return new ServiceResponse<Cart>
+                {
+                    Success = true,
+                    Message = "Item added to cart successfully",
+                    Data = result  // e.g., number of rows affected
                 };
             }
-            return new ServiceResponse<int>
+            catch (Exception ex)
             {
-                Success = true,
-                Message = "Item added to cart successfully",
-                Data = result  // e.g., number of rows affected
-            };
+                // log exception here
+                return new ServiceResponse<Cart>
+                {
+                    Success = false,
+                    Message = $"Error adding item to cart: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
-        public async Task<ServiceResponse<int>> RemoveFromCartAsync(int itemId, int userId)
+        public async Task<ServiceResponse<bool>> RemoveFromCartAsync(int itemId, int userId)
         {
-            var result = await _repository.RemoveFromCartAsync(itemId, userId);
-            if(result == 0)
+            try
             {
-                return new ServiceResponse<int>
+                var result = await _repository.RemoveFromCartAsync(itemId, userId);
+                if (!result)
                 {
-                    Success = false,
-                    Message = "Item not found",
-                    Data = 0
+                    return new ServiceResponse<bool>
+                    {
+                        Success = false,
+                        Message = "Item not found in cart.",
+                        Data = false
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    Success = true,
+                    Message = "Item removed from cart successfully",
+                    Data = result // e.g., number of rows affected
                 };
             }
-            return new ServiceResponse<int>
+            catch (Exception ex)
             {
-                Success = true,
-                Message = "Item removed from cart successfully",
-                Data = result // e.g., number of rows affected
-            };
+                // log exception here
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = $"Error removing item from cart: {ex.Message}",
+                    Data = false
+                };
+            }
         }
     }
 }
