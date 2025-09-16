@@ -9,25 +9,22 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Data;
+using System.Security.Claims;
 
 namespace AllInOneProject.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class PartyController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly string _connectionString;
         private readonly IPartyService _partyService;
-        public PartyController(ApplicationDbContext context, IConfiguration configuration, IPartyService partyService)
+        public PartyController(IPartyService partyService)
         {
-            _context = context;
             _partyService = partyService;
-            _connectionString = configuration.GetConnectionString("ConnectionString");
         }
-        private int? UserId => HttpContext.Session.GetInt32("UserId");
+        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
         public async Task<IActionResult> Party()
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
             var response = await _partyService.GetAllPartiesAsync();
@@ -46,7 +43,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveParty(PartyMasterViewModel model)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
             // Map ViewModel → DTO //User PartyMasterRequest for Save and Update
@@ -63,7 +60,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> EditParty(int id)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
             // Map ViewModel → DTO //User PartyMasterDTO for GetPartyByIdAsync and GetAllPartiesAsync
@@ -86,7 +83,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateParty(PartyMasterViewModel model)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
             var request = new PartyMasterRequest
@@ -103,7 +100,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteParty(int Id)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
             var response = await _partyService.DeletePartyAsync(Id);

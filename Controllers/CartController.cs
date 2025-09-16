@@ -1,39 +1,36 @@
 ﻿using AllInOneProject.Data;
-using AllInOneProject.Models;
 using AllInOneProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AllInOneProject.Controllers
 {
     [Authorize(Roles = "Admin,User")]
     public class CartController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IItemService _itemService;
-        public CartController(ApplicationDbContext context, IItemService itemService) 
+        public CartController(IItemService itemService) 
         {
-            _context = context;
             _itemService = itemService;
         }
-        private int? UserId => HttpContext.Session.GetInt32("UserId");
+        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         public async Task<IActionResult> Cart()
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
-            var response = await _itemService.GetUserCartItemsAsync(UserId??0);
+            var response = await _itemService.GetUserCartItemsAsync(Convert.ToInt32(UserId));
             return View(response.Data);
         }
         [HttpPost]
         public async Task<IActionResult> AddToCart(int itemId)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return Unauthorized(new { message = "User not logged in" });
 
-            var response = await _itemService.AddToCartAsync(itemId, UserId ?? 0);
+            var response = await _itemService.AddToCartAsync(itemId, Convert.ToInt32(UserId));
 
             if (!response.Success)
                 return BadRequest(response);
@@ -43,10 +40,10 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int itemId)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return Unauthorized(new { message = "User not logged in" });
 
-            var response = await _itemService.RemoveFromCartAsync(itemId, UserId ?? 0);
+            var response = await _itemService.RemoveFromCartAsync(itemId, Convert.ToInt32(UserId));
 
             if (!response.Success)
                 return BadRequest(response);

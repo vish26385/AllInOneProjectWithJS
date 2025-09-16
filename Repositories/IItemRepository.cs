@@ -13,7 +13,7 @@ namespace AllInOneProject.Repositories
         Task<Item?> GetItemByIdAsync(int id);
         Task<List<Item>> GetAllItemsAsync();
         Task<List<Item>> GetUserCartItemsAsync(int userId);
-        Task<Cart> AddToCartAsync(int itemId, int userId);
+        Task<Cart> AddToCartAsync(Cart cartItem);
         Task<bool> RemoveFromCartAsync(int itemId, int userId);
     }
 }

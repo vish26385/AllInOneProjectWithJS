@@ -1,12 +1,9 @@
 ﻿using AllInOneProject.Data;
 using AllInOneProject.DTOs;
 using AllInOneProject.Services;
-using Azure;
-using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AllInOneProject.Controllers
 {
@@ -18,10 +15,10 @@ namespace AllInOneProject.Controllers
         {
             _itemService = itemService;
         }
-        private int? UserId => HttpContext.Session.GetInt32("UserId");
+        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);   
         public async Task<IActionResult> Item()
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
             var response = await _itemService.GetAllItemsAsync();
@@ -30,7 +27,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertItem([FromBody] ItemRequest request)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return Unauthorized(new { message = "User not logged in" });
 
             if (!ModelState.IsValid)
@@ -53,7 +50,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateItem([FromBody] ItemRequest request)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return Unauthorized(new { message = "User not logged in" });
 
             if (!ModelState.IsValid)
@@ -76,7 +73,7 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteItem([FromBody] int id)
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.DeleteItemAsync(id);

@@ -5,8 +5,8 @@ namespace AllInOneProject.Services
 {
     public interface IAuthService
     {
-        Task<int> RegisterAsync(RegisterRequest request);
-        Task<User?> ForgotPasswordAsync(string email);
-        Task<int> LoginAsync(RegisterRequest request);
+        Task<ServiceResponse<UserDto>> RegisterAsync(RegisterRequest request);
+        Task<bool> ForgotPasswordAsync(string email);
+        Task<ServiceResponse<LoginResultDto>> LoginAsync(LoginRequest request);
     }
 }

@@ -70,7 +70,7 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<PartyMaster>> SavePartyAsync(PartyMasterRequest request)
+        public async Task<ServiceResponse<PartyMasterDTO>> SavePartyAsync(PartyMasterRequest request)
         {
             try
             {
@@ -81,17 +81,19 @@ namespace AllInOneProject.Services
 
                 var result = await _partyRepository.SavePartyAsync(party);
 
-                return new ServiceResponse<PartyMaster>
+                var partyMasterDTO = new PartyMasterDTO { Id = result.Id, Name = result.Name };
+
+                return new ServiceResponse<PartyMasterDTO>
                 {
                     Success = true,
                     Message = "Party saved successfully",
-                    Data = result
+                    Data = partyMasterDTO
                 };
             }
             catch (Exception ex)
             {
                 // log exception here
-                return new ServiceResponse<PartyMaster>
+                return new ServiceResponse<PartyMasterDTO>
                 {
                     Success = false,
                     Message = $"Error updating party: {ex.Message}"

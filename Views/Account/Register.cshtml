@@ -27,39 +27,94 @@
                 </div>
             </form>
 
-            <div id="registerMessage" class="mt-3 text-center fw-semibold"></div>
+            <div class = "notification" id="registerMessage"></div>
         </div>
     </div>
 </div>
 
 <script>
-    function register() {
+    // function register() {
+    //     const username = document.getElementById('registerUsername').value;
+    //     const email = document.getElementById('registerEmail').value;
+    //     const password = document.getElementById('registerPassword').value;
+
+    //     fetch('/Account/Register', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ username, email, password })
+    //     })
+    //     .then(res => res.json())
+    //     .then(msg => {
+    //         const msgBox = document.getElementById('registerMessage');
+    //         msgBox.innerText = msg;
+
+    //         if (msg === "Registered") {
+    //             msgBox.classList.remove("text-danger");
+    //             msgBox.classList.add("text-success");
+    //             setTimeout(() => {
+    //                 window.location.href = '/Account/Login';
+    //             }, 1000);
+    //         } else {
+    //             msgBox.classList.remove("text-success");
+    //             msgBox.classList.add("text-danger");
+    //         }
+    //     });
+    // }
+
+  async function register() {
         const username = document.getElementById('registerUsername').value;
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
 
-        fetch('/Account/Register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, email, password })
-        })
-        .then(res => res.json())
-        .then(msg => {
-            const msgBox = document.getElementById('registerMessage');
-            msgBox.innerText = msg;
+        try{
+              const response = await fetch('/Account/Register', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ username, email, password })
+              });
 
-            if (msg === "Registered") {
-                msgBox.classList.remove("text-danger");
-                msgBox.classList.add("text-success");
-                setTimeout(() => {
+              // 🔹 Handle validation / bad request errors (400)
+              if (response.status === 400) {
+                  const errorResult = await response.json();
+                  showMessage(errorResult.message || "Validation failed", false);
+                  return;
+              }
+
+                // 🔹 Handle server errors
+              if (!response.ok) {
+                  const text = await response.text();
+                  console.error("Server error:", text);
+                  showMessage("Insert failed", false);
+                  return;
+              }
+
+              const result = await response.json();
+
+              if (result.success) {
                     window.location.href = '/Account/Login';
-                }, 1000);
-            } else {
-                msgBox.classList.remove("text-success");
-                msgBox.classList.add("text-danger");
-            }
-        });
+              }
+          } catch (error) {
+              console.error("Error:", error);
+              showMessage("Unexpected error", false);
+          };
     }
+
+function showMessage(message, success) {
+    const msgBox = document.getElementById('registerMessage');
+          msgBox.innerText = message;
+          // background color based on success/failure
+          msgBox.style.backgroundColor = success ? "#4BB543" : "#DC3545";
+
+          // trigger animation
+          msgBox.classList.remove("show");
+          void msgBox.offsetWidth; // reflow hack to restart animation
+          msgBox.classList.add("show");
+
+          // auto hide after 3s
+          setTimeout(() => {
+              msgBox.classList.remove("show");
+          }, 2000);
+}
 
     window.onload = function () {
         document.getElementById('registerUsername')?.focus();

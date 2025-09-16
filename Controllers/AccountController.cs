@@ -1,24 +1,17 @@
 ﻿using AllInOneProject.Data;
 using AllInOneProject.DTOs;
-using AllInOneProject.Models;
-using AllInOneProject.Repositories;
 using AllInOneProject.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AllInOneProject.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IAuthService _authService;
-        public AccountController(ApplicationDbContext context, IAuthService authService)
+        public AccountController(IAuthService authService)
         {
-            _context = context;
             _authService = authService;
         }
 
@@ -39,20 +32,28 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var response = await _authService.RegisterAsync(request);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
 
-            if (response == 0)
-                return Json("UserName already exists");            
-            else if (response == -1)
-                return Json("Failed to register");
-            else 
-                return Json("Registered");
+                return BadRequest(new { success = false, message = string.Join("\n", errors) });
+            }
+
+            var response = await _authService.RegisterAsync(request);
+            
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
             var user = await _authService.ForgotPasswordAsync(email);
-            if (user != null)
+            if (user)
             {
                 return Json($"Reset link sent to {email}");
             }
@@ -60,20 +61,30 @@ namespace AllInOneProject.Controllers
                 return Json("Email not found");
         }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] RegisterRequest request)  
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)  
         {
-            var response = await _authService.LoginAsync(request);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
 
-            if (response == 0)
-                return Json("Invalid Credentials!");
-            else
-                return Json("Success");
+                return BadRequest(new { success = false, message = string.Join("\n", errors) });
+            }
+
+            var response = await _authService.LoginAsync(request);
+            
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Session.Clear();
+            //HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
     }

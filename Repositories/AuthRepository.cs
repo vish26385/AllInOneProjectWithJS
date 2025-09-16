@@ -13,11 +13,9 @@ namespace AllInOneProject.Repositories
     public class AuthRepository : IAuthRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         public AuthRepository(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<bool> ExistsAsync(string userName)
@@ -30,10 +28,11 @@ namespace AllInOneProject.Repositories
             return await _context.Users.FirstOrDefaultAsync(x => x.UserName == userName);
         }
 
-        public async Task<bool> RegisterAsync(User user)
+        public async Task<User> RegisterAsync(User user)
         {
             _context.Users.Add(user);
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+            return user;
         }
 
         public async Task<User?> GetByEmailAsync(string email)

@@ -17,7 +17,7 @@ namespace AllInOneProject.Services
             _repository = repository;
         }
 
-        public async Task<ServiceResponse<Item>> InsertItemAsync(ItemRequest request)
+        public async Task<ServiceResponse<ItemDto>> InsertItemAsync(ItemRequest request)
         {
             try
             {
@@ -30,17 +30,19 @@ namespace AllInOneProject.Services
 
                 var result = await _repository.InsertItemAsync(item);
 
-                return new ServiceResponse<Item>
+                var dto = new ItemDto { Id = result.Id, Name = result.Name, Price = result.Price };
+
+                return new ServiceResponse<ItemDto>
                 {
                     Success = true,
                     Message = "Item inserted successfully",
-                    Data = result  // e.g., number of rows affected or new ItemId
+                    Data = dto  // e.g., number of rows affected or new ItemId
                 };
             }
             catch (SqlException ex) // database-specific errors
             {
                 // log ex (Serilog, NLog, etc.)
-                return new ServiceResponse<Item>
+                return new ServiceResponse<ItemDto>
                 {
                     Success = false,
                     Message = "A database error occurred while inserting the item."
@@ -49,7 +51,7 @@ namespace AllInOneProject.Services
             catch (Exception ex) // fallback for unexpected errors
             {
                 // log ex
-                return new ServiceResponse<Item>
+                return new ServiceResponse<ItemDto>
                 {
                     Success = false,
                     Message = "An unexpected error occurred while inserting the item."
@@ -131,99 +133,122 @@ namespace AllInOneProject.Services
             }
         }
 
-        public async Task<ServiceResponse<List<Item>>> GetAllItemsAsync()
+        public async Task<ServiceResponse<List<ItemDto>>> GetAllItemsAsync()
         {
             var items = await _repository.GetAllItemsAsync();
 
             if (items == null || items.Count == 0)
             {
-                return new ServiceResponse<List<Item>>
+                return new ServiceResponse<List<ItemDto>>
                 {
                     Success = false,
                     Message = "No items found",
-                    Data = new List<Item>()
+                    Data = new List<ItemDto>()
                 };
             }
 
-            return new ServiceResponse<List<Item>>
+            var itemDTOs = new List<ItemDto>();
+            foreach (var item in items)
+            {
+                itemDTOs.Add(new ItemDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Price = item.Price
+                });
+            }
+
+            return new ServiceResponse<List<ItemDto>>
             {
                 Success = true,
                 Message = "Items retrieved successfully",
-                Data = items
+                Data = itemDTOs
             };
         }
 
-        public async Task<ServiceResponse<Item>> GetItemByIdAsync(int id)
+        public async Task<ServiceResponse<ItemDto>> GetItemByIdAsync(int id)
         {
             var result = await _repository.GetItemByIdAsync(id);
             if (result == null)
             {
-                return new ServiceResponse<Item>
+                return new ServiceResponse<ItemDto>
                 {
                     Success = false,
-                    Message = "No items found",
-                    Data = new Item()
+                    Message = "No items found"
                 };
             }
-            return new ServiceResponse<Item>
+            var dto = new ItemDto{ Id = result.Id, Name = result.Name, Price = result.Price};
+            return new ServiceResponse<ItemDto>
             {
                 Success = true,
                 Message = "Item retrieved successfully",
-                Data = result
+                Data = dto
             };
         }
 
-        public async Task<ServiceResponse<List<Item>>> GetUserCartItemsAsync(int userId)
+        public async Task<ServiceResponse<List<ItemDto>>> GetUserCartItemsAsync(int userId)
         {
             var cartItems = await _repository.GetUserCartItemsAsync(userId);
 
             if (cartItems == null || cartItems.Count == 0)
             {
-                return new ServiceResponse<List<Item>>
+                return new ServiceResponse<List<ItemDto>>
                 {
                     Success = false,
                     Message = "No cart items found",
-                    Data = new List<Item>()
+                    Data = new List<ItemDto>()
                 };
             }
 
-            return new ServiceResponse<List<Item>>
+            var cartItemDTOs = new List<ItemDto>();
+            foreach (var item in cartItems)
+            {
+                cartItemDTOs.Add(new ItemDto { Id = item.Id, Name = item.Name, Price = item.Price });
+            }
+            return new ServiceResponse<List<ItemDto>>
             {
                 Success = true,
                 Message = "Cart items retrieved successfully",
-                Data = cartItems
+                Data = cartItemDTOs
             };
         }
 
-        public async Task<ServiceResponse<Cart>> AddToCartAsync(int itemId, int userId)
+        public async Task<ServiceResponse<CartDto>> AddToCartAsync(int itemId, int userId)
         {
             try
             {
-                var result = await _repository.AddToCartAsync(itemId, userId);
+                var cartItem = new Cart
+                {
+                    ItemId = itemId,
+                    UserId = userId
+                };
+
+                var result = await _repository.AddToCartAsync(cartItem);
                 if (result == null)
                 {
-                    return new ServiceResponse<Cart>
+                    return new ServiceResponse<CartDto>
                     {
                         Success = false,
-                        Message = "Failed to add item to cart",
-                        Data = null
+                        Message = "Failed to add item to cart"
                     };
                 }
-                return new ServiceResponse<Cart>
+
+                var cartDtos = new CartDto { Id = result.Id, ItemId = result.ItemId, UserId = result.UserId }; 
+
+                return new ServiceResponse<CartDto>
                 {
                     Success = true,
                     Message = "Item added to cart successfully",
-                    Data = result  // e.g., number of rows affected
+                    Data = cartDtos  // e.g., number of rows affected
                 };
             }
             catch (Exception ex)
             {
                 // log exception here
-                return new ServiceResponse<Cart>
+                return new ServiceResponse<CartDto>
                 {
                     Success = false,
-                    Message = $"Error adding item to cart: {ex.Message}",
-                    Data = null
+                    Message = $"Error adding item to cart: {ex.Message}"
                 };
             }
         }
@@ -238,8 +263,7 @@ namespace AllInOneProject.Services
                     return new ServiceResponse<bool>
                     {
                         Success = false,
-                        Message = "Item not found in cart.",
-                        Data = false
+                        Message = "Item not found in cart."
                     };
                 }
                 return new ServiceResponse<bool>
@@ -255,8 +279,7 @@ namespace AllInOneProject.Services
                 return new ServiceResponse<bool>
                 {
                     Success = false,
-                    Message = $"Error removing item from cart: {ex.Message}",
-                    Data = false
+                    Message = $"Error removing item from cart: {ex.Message}"
                 };
             }
         }

@@ -99,14 +99,8 @@ namespace AllInOneProject.Repositories
             return cartItems;
         }
 
-        public async Task<Cart> AddToCartAsync(int itemId, int userId)
+        public async Task<Cart> AddToCartAsync(Cart cartItem)
         {
-            var cartItem = new Cart
-            {
-                ItemId = itemId,
-                UserId = userId
-            };
-
             _context.Carts.Add(cartItem);
             await _context.SaveChangesAsync();
 

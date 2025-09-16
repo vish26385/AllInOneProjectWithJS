@@ -7,30 +7,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Security.Claims;
 
 namespace AllInOneProject.Controllers
 {
     [Authorize(Roles = "Admin,User")]
     public class SaleController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly string _connectionString;
         private readonly IPartyService _partyService;
         private readonly IItemService _itemService;
         private readonly ISaleService _saleService;
 
-        public SaleController(ApplicationDbContext context, IConfiguration configuration, IItemService itemService, IPartyService partyService, ISaleService saleService)
+        public SaleController(IItemService itemService, IPartyService partyService, ISaleService saleService)
         {
-            _context = context;
-            _connectionString = configuration.GetConnectionString("ConnectionString");
             _itemService = itemService;
             _partyService = partyService;
             _saleService = saleService;
         }
-        private int? UserId => HttpContext.Session.GetInt32("UserId");
+        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
         public async Task<IActionResult> Sale()
         {
-            if (UserId == null)
+            if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
             ////****Type Of IOrderedQueryable<SalesMaster>****////
             //var query = from s in _context.SalesMas

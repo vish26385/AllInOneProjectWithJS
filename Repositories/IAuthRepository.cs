@@ -7,7 +7,7 @@ namespace AllInOneProject.Repositories
     {
         Task<bool> ExistsAsync(string userName);
         Task<User?> GetByUserNameAsync(string userName);
-        Task<bool> RegisterAsync(User user);
+        Task<User> RegisterAsync(User user);
         Task<User?> GetByEmailAsync(string email);
     }
 }
