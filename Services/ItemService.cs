@@ -220,7 +220,8 @@ namespace AllInOneProject.Services
                 var cartItem = new Cart
                 {
                     ItemId = itemId,
-                    UserId = userId
+                    UserId = userId,
+                    Quantity = 1
                 };
 
                 var result = await _repository.AddToCartAsync(cartItem);

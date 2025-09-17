@@ -1,0 +1,65 @@
+﻿@model AllInOneProject.DTOs.OrderDto
+
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-success text-white text-center py-4">
+            <h2 class="mb-0">✅ Order Placed Successfully!</h2>
+            <p class="mb-0">Thank you for your purchase 🎉</p>
+        </div>
+
+        <div class="card-body p-5">
+            <!-- Order Info -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="fw-bold">Order Summary</h5>
+                    <p><strong>Order ID:</strong> <span class="text-primary">@Model.Id</span></p>
+                    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("dd MMM yyyy, hh:mm tt")</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5 class="fw-bold">Total Amount</h5>
+                    <h3 class="text-success">₹@Model.TotalAmount.ToString("N2")</h3>
+                </div>
+            </div>
+
+            <!-- Ordered Items -->
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-success text-center">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Price (₹)</th>
+                            <th>Quantity</th>
+                            <th>Subtotal (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@item.Item.Name</td>
+                                <td class="text-end">₹@item.Price.ToString("N2")</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end text-success fw-bold">₹@((item.Price * item.Quantity).ToString("N2"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-controller="Item" asp-action="Item" class="btn btn-outline-primary btn-lg">
+                    <i class="fa fa-shopping-cart"></i> Continue Shopping
+                </a>
+                <a asp-controller="Cart" asp-action="DownloadInvoice" asp-route-id="@Model.Id"
+                   class="btn btn-success btn-lg">
+                    <i class="fa fa-file-pdf"></i> Download Invoice
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -321,9 +321,9 @@
             const result = await response.json();
             showMessage(result.message, result.success);
 
-            if (result.success) {
-                setTimeout(() => location.reload(), 800);
-            }
+            // if (result.success) {
+            //     setTimeout(() => location.reload(), 800);
+            // }
         } catch (error) {
             console.error('Error:', error);
             showMessage("Unexpected error", false);

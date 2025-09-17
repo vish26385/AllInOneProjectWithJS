@@ -15,5 +15,7 @@ namespace AllInOneProject.Data
         public DbSet<PartyMaster> PartyMasters { get; set; }
         public DbSet<SalesMaster> SalesMas { get; set; }
         public DbSet<SalesDetail> SalesDet { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
     }
 }
