@@ -2,8 +2,7 @@
 
 <div class="sales-data-list-container" style="margin-top: 20px;">
    
-    <table id="salesDataTable"
-           class="table table-striped table-hover align-middle">
+    <table id="salesDataTable" class="table table-striped table-hover align-middle">
         <thead class="table-dark">
             <tr>
                 <th>Code</th>
@@ -29,7 +28,7 @@
                                    style="width: 80px; padding: 6px; border: none; background: transparent;" />
                         </td>
                         <td style="padding: 10px;">
-                            <input readonly type="text" id="idSaleDate" value="@item.SaleDate"
+                            <input readonly type="text" id="idSaleDate" value="@item.SaleDate.ToString("yyyy-MM-dd")"
                                    style="width: 120px; padding: 6px; border: none; background: transparent;" />
                         </td>
                         <td style="padding: 10px;">
@@ -41,7 +40,7 @@
                                    style="width: 120px; padding: 6px; border: none; background: transparent;" />
                         </td>
                         <td style="padding: 10px;">
-                            <input readonly type="text" id="idDueDate" value="@item.DueDate"
+                            <input readonly type="text" id="idDueDate" value="@item.DueDate.ToString("yyyy-MM-dd")"
                                    style="width: 120px; padding: 6px; border: none; background: transparent;" />
                         </td>
                         <td style="padding: 10px;">

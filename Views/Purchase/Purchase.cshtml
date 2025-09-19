@@ -1,7 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Purchase Invoice";
 }
+@if (TempData["PurchaseMessage"] != null)
+{
+    <div class="notification show" id="notifyMsg">
+        @(TempData["PurchaseMessage"])
+    </div>
 
+    <script>
+        setTimeout(() => {
+            document.getElementById("notifyMsg").classList.remove("show");
+        }, 2000); // stay 3s before hiding
+    </script>
+}
 <div class="container my-4">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4">
