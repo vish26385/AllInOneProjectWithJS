@@ -1,8 +1,59 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">
+            <i class="bi bi-bag-fill me-2"></i>Welcome to Smart ERP
+        </h1>
+        <p class="lead text-muted">
+            Manage your items, parties, and purchases with ease.
+            A simple demo project built with <strong>ASP.NET Core 8 MVC & Identity</strong>.
+        </p>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a href="/Account/Register" class="btn btn-primary btn-lg me-2">
+                <i class="bi bi-person-plus"></i> Get Started
+            </a>
+            <a href="/Account/Login" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+        }
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <i class="bi bi-box display-5 text-primary"></i>
+                    <h5 class="card-title mt-3">Item Master</h5>
+                    <p class="card-text text-muted">Manage and organize your items with a clean interface.</p>
+                    <a href="/Item" class="btn btn-sm btn-outline-primary">Go to Items</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <i class="bi bi-people display-5 text-success"></i>
+                    <h5 class="card-title mt-3">Party Master</h5>
+                    <p class="card-text text-muted">Maintain your clients/parties with contact and account details.</p>
+                    <a href="/Party" class="btn btn-sm btn-outline-success">Go to Parties</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <i class="bi bi-cart display-5 text-warning"></i>
+                    <h5 class="card-title mt-3">Purchase Transactions</h5>
+                    <p class="card-text text-muted">Track purchase entries and manage transaction history.</p>
+                    <a href="/Purchase" class="btn btn-sm btn-outline-warning">Go to Purchases</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

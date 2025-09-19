@@ -1,0 +1,18 @@
+<svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cube icon -->
+  <g transform="translate(0,5)">
+    <polygon points="15,0 30,8 15,16 0,8" fill="#2196F3" stroke="#1976D2" stroke-width="1"/>
+    <polygon points="15,16 30,8 30,24 15,32" fill="#42A5F5" stroke="#1976D2" stroke-width="1"/>
+    <polygon points="15,16 0,8 0,24 15,32" fill="#64B5F6" stroke="#1976D2" stroke-width="1"/>
+    <!-- Checkmark -->
+    <polyline points="6,15 12,20 22,10" fill="none" stroke="white" stroke-width="3"/>
+  </g>
+
+  <!-- Text -->
+  <text x="50" y="25" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#000">
+    Smart
+  </text>
+  <text x="50" y="45" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#000">
+    ERP
+  </text>
+</svg>

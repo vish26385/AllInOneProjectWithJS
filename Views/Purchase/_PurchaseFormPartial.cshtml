@@ -1,0 +1,68 @@
+﻿@model AllInOneProject.ViewModels.PurchaseViewModel
+
+<div class="card shadow-sm mb-4 p-3">
+    <div class="d-flex align-items-end gap-3 flex-wrap">
+
+        <!-- Hidden CalcSource -->
+        <input type="hidden" id="CalcSource" name="purchaseMaster.CalcSource" value="" />
+
+        <!-- Code -->
+        <div class="d-flex flex-column">
+            <label class="form-label mb-1">Code</label>
+            <input type="number" class="form-control" readonly name="purchaseMaster.Id" value="@Model.purchaseMaster.Id" style="width:120px;" />
+        </div>
+
+        <!-- Date -->
+        <div class="d-flex flex-column">
+            <label class="form-label mb-1">Date</label>
+            <input type="date" class="form-control" name="purchaseMaster.PurchaseDate" value="@Model.purchaseMaster.PurchaseDate.ToString("yyyy-MM-dd")" style="width:160px;" />
+        </div>
+
+        <!-- Party -->
+        <div class="d-flex flex-column">
+            <label class="form-label mb-1">Party</label>
+            <select class="form-select" name="purchaseMaster.PartyId" style="width:200px;">
+                <option value="0">-- Select Party --</option>
+                @foreach (var item in Model.partyMasters)
+                {
+                    if (Model.purchaseMaster?.PartyId == item.Id)
+                    {
+                        <option value="@item.Id" selected>@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Save / Update Button -->
+        <div class="d-flex flex-column">
+            <label class="form-label mb-1">&nbsp;</label>
+            @if (Model != null && Model.purchaseMaster.Id > 0)
+            {
+                <button type="submit" formaction="/Purchase/UpdatePurchase" class="btn btn-primary d-flex align-items-center gap-2">
+                    <i class="bi bi-arrow-repeat"></i> Update
+                </button>
+            }
+            else
+            {
+                <button type="submit" formaction="/Purchase/SavePurchase" class="btn btn-success d-flex align-items-center gap-2">
+                    <i class="bi bi-save"></i> Save
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+</style>

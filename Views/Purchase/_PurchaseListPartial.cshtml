@@ -1,0 +1,125 @@
+﻿@model AllInOneProject.ViewModels.PurchaseViewModel
+@{
+    var items = (List<AllInOneProject.DTOs.ItemDto>)ViewBag.Items ?? new List<AllInOneProject.DTOs.ItemDto>();
+}
+<div class="table-responsive">
+
+    <table id="linesTable" class="table table-bordered table-hover align-middle">
+        <thead class="table-light text-center">
+            <tr>
+                <th>Item Name</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < (Model.purchaseMaster.purchaseDetails?.Count ?? 0); i++)
+                {
+                    <tr>
+                        <!-- Item Name Dropdown -->
+                        <td>
+                            <select class="form-select" name="purchaseMaster.purchaseDetails[@i].ItemId" onchange="this.form.submit()">
+                                <option value="0">-- Select Item --</option>
+                                @foreach (var item in Model.itemMasters)
+                                {
+                                    if (Model.purchaseMaster.purchaseDetails[i].ItemId == item.Id)
+                                    {
+                                        <option value="@item.Id" selected>@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+
+                        <!-- Quantity -->
+                        <td>
+                            <input type="number" class="form-control text-center" name="purchaseMaster.purchaseDetails[@i].Qty" oninput="this.form.submit()" value="@Model.purchaseMaster.purchaseDetails[i].Qty" />
+                        </td>
+
+                        <!-- Rate -->
+                        <td>
+                            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[@i].Rate" value="@Model.purchaseMaster.purchaseDetails[i].Rate" />
+                        </td>
+
+                        <!-- Amount -->
+                        <td>
+                            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[@i].Amount" value="@Model.purchaseMaster.purchaseDetails[i].Amount" />
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-success" onclick="addRow()">
+                                    <i class="bi bi-plus-circle me-1"></i> Add
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .table input, .table select {
+        min-width: 80px;
+    }
+
+    .btn i {
+        font-size: 1rem;
+    }
+</style>
+
+<script>
+    function addRow() {
+        var table = document.getElementById('linesTable').getElementsByTagName('tbody')[0];
+        var index = table.rows.length;
+        var tr = document.createElement('tr');
+        var itemOptions = `@Html.Raw(string.Join("", ((List<AllInOneProject.DTOs.ItemDto>)ViewBag.Items ?? new List<AllInOneProject.DTOs.ItemDto>()).Select(it => $"<option value=\"{it.Id}\">{it.Name}</option>")))`;
+
+
+        tr.innerHTML = `
+        <td><select name="purchaseMaster.purchaseDetails[${index}].ItemId" class="form-select" onchange="this.form.submit()"><option value="">-- Select Item --</option>${itemOptions}</select></td>
+        <td>
+            <input type="number" class="form-control text-center" name="purchaseMaster.purchaseDetails[${index}].Qty" oninput="this.form.submit()" value = "0" />
+        </td>
+        <td>
+            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[${index}].Rate" value = "0" />
+        </td>
+        <td>
+            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[${index}].Amount" value = "0" />
+        </td>
+        <td class="text-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-success" onclick="addRow()">
+                    <i class="bi bi-plus-circle me-1"></i> Add
+                </button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </button>
+            </div>
+        </td>`;
+        table.appendChild(tr);
+    }
+    function removeRow(btn)
+    {
+        const row = btn.closest('tr');
+        const tbody = row.parentElement;
+        const totalRows = tbody.querySelectorAll('tr').length;
+        if (totalRows <= 1) {
+            return;
+        }
+        btn.closest('tr').remove();
+    }
+</script>

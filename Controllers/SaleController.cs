@@ -124,7 +124,7 @@ namespace AllInOneProject.Controllers
             //                        sd.Qty
             //                    }).ToList()
             //                }).ToListAsync();
-            var saleData = await _saleService.GetSaleDataListAsync();
+            var saleData = await _saleService.GetSaleDataListAsync();           
             return View(saleData);
         }
         [HttpGet]

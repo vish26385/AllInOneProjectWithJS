@@ -39,7 +39,6 @@ namespace AllInOneProject.Controllers
 
             return View(vm);
         }
-
         [HttpPost]
         public async Task<IActionResult> SaveParty(PartyMasterViewModel model)
         {
@@ -54,7 +53,7 @@ namespace AllInOneProject.Controllers
 
             var response = await _partyService.SavePartyAsync(request);
 
-            TempData["Message"] = response.Message;
+            TempData["PartyMessage"] = response.Message;
             return RedirectToAction("Party");
         }
         [HttpPost]
@@ -94,7 +93,7 @@ namespace AllInOneProject.Controllers
 
             var response = await _partyService.UpdatePartyAsync(request);
 
-            TempData["Message"] = response.Message;
+            TempData["PartyMessage"] = response.Message;
             return RedirectToAction("Party");
         }
         [HttpPost]
@@ -105,7 +104,7 @@ namespace AllInOneProject.Controllers
 
             var response = await _partyService.DeletePartyAsync(Id);
 
-            TempData["Message"] = response.Message;
+            TempData["PartyMessage"] = response.Message;
             return RedirectToAction("Party");
         }
     }

@@ -126,9 +126,9 @@ namespace AllInOneProject.Repositories
                 .Select(sm => new SaleDto
                 {
                     Id = sm.Id,
-                    SaleDate = sm.SalesDate.ToString("yyyy-MM-dd"),
+                    SaleDate = sm.SalesDate,
                     DueDays = sm.DueDays,
-                    DueDate = sm.DueDate.ToString("yyyy-MM-dd"),
+                    DueDate = sm.DueDate,
                     PartyId = sm.PartyId,
                     PartyName = sm.PartyMaster.Name,
                     Qty = sm.salesDetails.Sum(sd => sd.Qty),
@@ -141,6 +141,7 @@ namespace AllInOneProject.Repositories
                         Qty = sd.Qty
                     }).ToList()
                 })
+                .OrderByDescending(s => s.Id)
                 .ToListAsync();
 
             return saleData;
