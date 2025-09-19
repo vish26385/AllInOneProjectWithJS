@@ -225,5 +225,13 @@ namespace AllInOneProject.Controllers
                 return File(ms.ToArray(), "application/pdf", fileName);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCartCount()
+        {
+            var response = await _cartService.GetCartItemsAsync(Convert.ToInt32(UserId));
+            int itemCount = response.Data.Sum(c => c.Quantity);
+            return Json(new { itemCount });
+        }   
     }   
 }

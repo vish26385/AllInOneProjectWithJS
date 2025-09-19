@@ -142,7 +142,7 @@
 
                     // clear inputs
                     document.getElementById('itemName').value = "";
-                    document.getElementById('itemPrice').value = "";
+                    document.getElementById('itemPrice').value = "";                    
             }
         } catch (error) {
             console.error("Error:", error);
@@ -321,9 +321,9 @@
             const result = await response.json();
             showMessage(result.message, result.success);
 
-            // if (result.success) {
-            //     setTimeout(() => location.reload(), 800);
-            // }
+            if (result.success) {
+                loadCartCount();
+            }
         } catch (error) {
             console.error('Error:', error);
             showMessage("Unexpected error", false);
@@ -347,6 +347,21 @@
                   msgBox.classList.remove("show");
               }, 2000);
     }
+   
+     async function loadCartCount() {
+        try {
+            let response = await fetch('/Cart/GetCartCount');
+            let data = await response.json();
+
+            let badge = document.getElementById("cart-count");
+            badge.textContent = data.itemCount;
+
+            // hide badge if 0
+            badge.style.display = data.itemCount > 0 ? "inline-block" : "none";
+        } catch (e) {
+            console.error("Error fetching cart count:", e);
+        }
+    }    
 
     window.onload = function () {
         document.getElementById('itemName')?.focus();

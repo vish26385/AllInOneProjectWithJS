@@ -5,6 +5,7 @@ using Azure.Core;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Diagnostics.Metrics;
 
 namespace AllInOneProject.Repositories
 {
@@ -87,11 +88,34 @@ namespace AllInOneProject.Repositories
             if (saleMaster == null)
                 throw new ArgumentException("Invalid sale data.");
 
+            var itemMaster = new Item();
             // Delete sale details if required
             if (deletedDetailIds != null && deletedDetailIds.Any())
             {
                 var detailsToDelete = _context.SalesDet.Where(d => deletedDetailIds.Contains(d.Id));
                 _context.SalesDet.RemoveRange(detailsToDelete);
+                foreach (var detail in detailsToDelete)
+                {
+                    if (detail.itemId > 0)
+                    {
+                        itemMaster = _context.Items?.Find(detail.itemId);
+                        itemMaster.CurrentStock = itemMaster.CurrentStock + (decimal)detail.Qty;
+                        _context.Entry(itemMaster).State = EntityState.Modified;
+                    }
+                }
+            }
+
+            if (saleMaster.salesDetails != null)
+            {
+                foreach (var detail in saleMaster.salesDetails)
+                {
+                    if (detail.itemId > 0)
+                    {
+                        itemMaster = _context.Items?.Find(detail.itemId);
+                        itemMaster.CurrentStock = itemMaster.CurrentStock - (decimal)detail.Qty;
+                        _context.Entry(itemMaster).State = EntityState.Modified;
+                    }
+                }
             }
 
             _context.SalesMas.Update(saleMaster);
@@ -108,6 +132,16 @@ namespace AllInOneProject.Repositories
                 var saleMas = await GetSaleMasterDataByIdAsync(id);
 
                 _context.SalesDet.RemoveRange(saleDet);
+                var itemMaster = new Item();
+                foreach (var detail in saleMas.salesDetails)
+                {
+                    if (detail.itemId > 0)
+                    {
+                        itemMaster = _context.Items?.Find(detail.itemId);
+                        itemMaster.CurrentStock = itemMaster.CurrentStock + (decimal)detail.Qty;
+                        _context.Entry(itemMaster).State = EntityState.Modified;
+                    }
+                }
                 _context.SalesMas.Remove(saleMas);
                 return await _context.SaveChangesAsync() > 0;
             }

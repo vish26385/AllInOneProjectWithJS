@@ -120,21 +120,21 @@
               void msgBox.offsetWidth; // reflow hack to restart animation
               msgBox.classList.add("show");
 
-              // auto hide after 3s
+              // auto hide after 2s
               setTimeout(() => {
                   msgBox.classList.remove("show");
-              }, 2000);
-
-            //document.getElementById('cartMessage').innerText = result.message;
+              }, 2000);            
 
             if (result.success) {
                 const row = btn.closest('tr');
                 if (row) row.remove();
+
+                window.location.href = '/Cart/Cart';
             }
         } catch (error) {
             console.error('Error:', error);
         }
-    }
+    }   
 </script>
 
 <!-- Bootstrap Icons -->
