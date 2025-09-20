@@ -27,13 +27,14 @@ namespace AllInOneProject.Controllers
             if (string.IsNullOrEmpty(UserId))
                 return RedirectToAction("Login", "Account");
 
-            var response = await _partyService.GetAllPartiesAsync();
+            var response = await _partyService.GetAllPartiesAsync(null);
             var vm = new PartyMasterViewModel
             {
                 partyMasters = response.Data?.Select(dto => new PartyMasterViewModel
                 {
                     Id = dto.Id,
-                    Name = dto.Name
+                    Name = dto.Name,
+                    Type = dto.Type
                 }).ToList()
             };
 
@@ -48,7 +49,8 @@ namespace AllInOneProject.Controllers
             // Map ViewModel → DTO //User PartyMasterRequest for Save and Update
             var request = new PartyMasterRequest
             {
-               Name = model.Name               
+               Name = model.Name,
+               Type = model.Type
             };
 
             var response = await _partyService.SavePartyAsync(request);
@@ -64,16 +66,18 @@ namespace AllInOneProject.Controllers
 
             // Map ViewModel → DTO //User PartyMasterDTO for GetPartyByIdAsync and GetAllPartiesAsync
             var partyDto = await _partyService.GetPartyByIdAsync(id);
-            var partiesDto = await _partyService.GetAllPartiesAsync();
+            var partiesDto = await _partyService.GetAllPartiesAsync(null);
 
             var vm = new PartyMasterViewModel
             {
                 Id = partyDto.Data.Id,
                 Name = partyDto.Data.Name,
+                Type = partyDto.Data.Type,
                 partyMasters = partiesDto.Data?.Select(dto => new PartyMasterViewModel
                 {
                     Id = dto.Id,
-                    Name = dto.Name
+                    Name = dto.Name,
+                    Type = dto.Type
                 }).ToList()
             };
 
@@ -88,7 +92,8 @@ namespace AllInOneProject.Controllers
             var request = new PartyMasterRequest
             {
                 Id = model.Id,
-                Name = model.Name                
+                Name = model.Name,
+                Type = model.Type
             };
 
             var response = await _partyService.UpdatePartyAsync(request);

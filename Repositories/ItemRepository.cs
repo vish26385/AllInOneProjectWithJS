@@ -76,7 +76,8 @@ namespace AllInOneProject.Repositories
                 {
                     Id = Convert.ToInt32(reader["Id"]),
                     Name = reader["Name"].ToString() ?? "",
-                    Price = Convert.ToDecimal(reader["Price"])
+                    Price = Convert.ToDecimal(reader["Price"]),
+                    CurrentStock = Convert.ToDecimal(reader["CurrentStock"])
                 });
             }
 

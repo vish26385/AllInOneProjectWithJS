@@ -1,28 +1,52 @@
 ﻿@model AllInOneProject.ViewModels.PartyMasterViewModel
 
-<div class="card shadow-sm border-0 rounded-4 mb-4">
-    <div class="card-body">
-        <h5 class="card-title mb-3">@(Model != null && Model.Id > 0 ? "Edit Party" : "Add Party")</h5>
+<h2 class="mb-4 text-center">👥 Manage Parties</h2>
 
-        <input type="hidden" name="Id" value="@Model?.Id" />
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-3">Add / Edit Party</h5>
 
-        <div class="row g-2">
-            <div class="col-md-8 d-flex">
-                <label for="partyName" class="form-label" style="width:15%">Party Name</label>
-                <input autofocus type="text" class="form-control" id="partyName" placeholder="Enter party name" name="Name" value="@Model?.Name" required="">
-            </div>
-            @if (Model != null && Model.Id > 0)
-            {
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100" formaction="/Party/UpdateParty">Update</button>
+                <input type="hidden" name="Id" value="@Model?.Id" />
+
+                <div class="mb-3">
+                    <label for="partyName" class="form-label" style="width:15%">Party Name</label>
+                    <input autofocus type="text" class="form-control" id="partyName" placeholder="Enter party name" name="Name" value="@Model?.Name" required="">
                 </div>
-            }
-            else
-            {
-                <div class="col-md-2 d-flex align-items-end">
+                <div class="mb-3">
+                    <label for="partyType" class="form-label" style="width:15%">Party Type</label>
+                    <select class="form-control" id="partyType" name="Type" value="@Model?.Type" required>
+                        <option value="">-- Select Type --</option>
+                        @if (Model.Type == "Customer")
+                        {
+                            <option value="Customer" selected>Customer</option>
+                        }
+                        else
+                        {
+                            <option value="Customer">Customer</option>
+                        }
+                        @if (Model.Type == "Supplier")
+                        {
+                            <option value="Supplier" selected>Supplier</option>
+                        }
+                        else
+                        {
+                            <option value="Supplier">Supplier</option>
+                        }
+
+                    </select>
+                </div>
+                @if (Model != null && Model.Id > 0)
+                {
+                    <button type="submit" class="btn btn-warning w-100" formaction="/Party/UpdateParty">Update</button>
+                }
+                else
+                {
                     <button type="submit" class="btn btn-primary w-100" formaction="/Party/SaveParty">Save</button>
-                </div>
-            }           
+                }
+            </div>
         </div>
     </div>
 </div>
+

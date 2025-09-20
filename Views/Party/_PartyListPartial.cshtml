@@ -1,6 +1,4 @@
-﻿@* @model AllInOneProject.ViewModels.PartyMasterViewModel *@
-
-<div class="card shadow-sm border-0 rounded-4">
+﻿<div class="card shadow-sm border-0 rounded-4">
     <div class="card-body">
         <h5 class="card-title mb-3">Party List</h5>
 
@@ -8,6 +6,7 @@
             <thead class="table-dark">
                 <tr>
                     <th scope="col">Party Name</th>
+                    <th scope="col">Party Type</th>
                     <th scope="col" class="text-center">Actions</th>
                 </tr>
             </thead>
@@ -18,6 +17,7 @@
                     {
                         <tr>
                             <td>@Model.partyMasters[i].Name</td>
+                            <td>@Model.partyMasters[i].Type</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2">
                                     <form method="post" action="/Party/EditParty">
@@ -40,7 +40,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="2" class="text-center text-muted">No parties found.</td>
+                        <td colspan="3" class="text-center text-muted">No parties found.</td>
                     </tr>
                 }
             </tbody>

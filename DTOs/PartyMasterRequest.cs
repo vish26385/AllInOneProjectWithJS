@@ -6,5 +6,6 @@ namespace AllInOneProject.DTOs
     {
         public int Id { get; set; }     // used for update
         public string Name { get; set; }
+        public string Type { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿<h2 class="mb-4">Parties</h2>
-@if (TempData["PartyMessage"] != null)
+﻿@if (TempData["PartyMessage"] != null)
 {
     <div class="notification show" id="notifyMsg">
         @(TempData["PartyMessage"])
@@ -11,7 +10,7 @@
         }, 2000); // stay 3s before hiding
     </script>
 }
-<form method="post" class="mb-4">
+<form method="post">
     @Html.Partial("_PartyFormPartial")
 </form>
 

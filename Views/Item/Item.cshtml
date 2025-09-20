@@ -35,6 +35,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Price</th>
+                        <th>Stock</th>
                         <th style="width: 400px;">Actions</th>
                     </tr>
                 </thead>
@@ -46,6 +47,7 @@
                             <tr>
                                 <td class="itemName">@item.Name</td>
                                 <td class="itemPrice">@item.Price</td>
+                                <td class="itemCurrentStock">@item.CurrentStock</td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-warning me-1"
                                             onclick="editItem(@item.Id,'@item.Name',@item.Price, this)">
@@ -66,7 +68,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="3" class="text-center text-muted">No items available</td>
+                            <td colspan="4" class="text-center text-muted">No items available</td>
                         </tr>
                     }
                 </tbody>
@@ -355,6 +357,8 @@
 
             let badge = document.getElementById("cart-count");
             badge.textContent = data.itemCount;
+
+            badge.className = data.itemCount > 0 ? "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" : "";
 
             // hide badge if 0
             badge.style.display = data.itemCount > 0 ? "inline-block" : "none";

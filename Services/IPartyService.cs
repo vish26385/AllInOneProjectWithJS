@@ -7,7 +7,7 @@ namespace AllInOneProject.Services
     {
         Task<ServiceResponse<PartyMasterDTO>> GetPartyByIdAsync(int id);
 
-        Task<ServiceResponse<List<PartyMasterDTO>>> GetAllPartiesAsync();
+        Task<ServiceResponse<List<PartyMasterDTO>>> GetAllPartiesAsync(string? partyType);
 
         Task<ServiceResponse<PartyMasterDTO>> SavePartyAsync(PartyMasterRequest request);        
 

@@ -22,13 +22,14 @@ namespace AllInOneProject.Repositories
             return await _context.PartyMasters.FindAsync(id);
         }
 
-        public async Task<List<PartyMaster>> GetAllPartiesAsync()
+        public async Task<List<PartyMaster>> GetAllPartiesAsync(string? partyType)
         {
             var parties = new List<PartyMaster>();
 
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("sp_GetAllParties", con);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@PartyType", SqlDbType.NVarChar, 100).Value = (object?)partyType ?? DBNull.Value; 
 
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
@@ -38,7 +39,8 @@ namespace AllInOneProject.Repositories
                 parties.Add(new PartyMaster
                 {
                     Id = Convert.ToInt32(reader["Id"]),
-                    Name = reader["Name"].ToString() ?? ""
+                    Name = reader["Name"].ToString() ?? "",
+                    Type = reader["Type"].ToString() ?? "",
                 });
             }
             
@@ -51,6 +53,7 @@ namespace AllInOneProject.Repositories
             using var cmd = new SqlCommand("sp_insertParty", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@PartyName", SqlDbType.NVarChar, 100).Value = party.Name;
+            cmd.Parameters.Add("@PartyType", SqlDbType.NVarChar, 100).Value = party.Type;
             // Add output parameter for new Id
             var idParam = cmd.Parameters.Add("@Id", SqlDbType.Int);
             idParam.Direction = ParameterDirection.Output;
@@ -68,8 +71,9 @@ namespace AllInOneProject.Repositories
             using var cmd = new SqlCommand("sp_updateParty", con);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@Id", party.Id);
-            cmd.Parameters.AddWithValue("@PartyName", party.Name);
+            cmd.Parameters.Add("@Id", SqlDbType.Int, 6).Value = party.Id;
+            cmd.Parameters.Add("@PartyName", SqlDbType.NVarChar, 100).Value = party.Name;
+            cmd.Parameters.Add("@PartyType", SqlDbType.NVarChar, 100).Value = party.Type;
 
             await con.OpenAsync();
             return await cmd.ExecuteNonQueryAsync() > 0;

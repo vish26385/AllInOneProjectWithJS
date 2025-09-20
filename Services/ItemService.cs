@@ -154,7 +154,8 @@ namespace AllInOneProject.Services
                 {
                     Id = item.Id,
                     Name = item.Name,
-                    Price = item.Price
+                    Price = item.Price,
+                    CurrentStock = item.CurrentStock
                 });
             }
 
@@ -177,7 +178,7 @@ namespace AllInOneProject.Services
                     Message = "No items found"
                 };
             }
-            var dto = new ItemDto{ Id = result.Id, Name = result.Name, Price = result.Price};
+            var dto = new ItemDto{ Id = result.Id, Name = result.Name, Price = result.Price, CurrentStock = result.CurrentStock};
             return new ServiceResponse<ItemDto>
             {
                 Success = true,
@@ -203,7 +204,7 @@ namespace AllInOneProject.Services
             var cartItemDTOs = new List<ItemDto>();
             foreach (var item in cartItems)
             {
-                cartItemDTOs.Add(new ItemDto { Id = item.Id, Name = item.Name, Price = item.Price });
+                cartItemDTOs.Add(new ItemDto { Id = item.Id, Name = item.Name, Price = item.Price, CurrentStock = item.CurrentStock });
             }
             return new ServiceResponse<List<ItemDto>>
             {

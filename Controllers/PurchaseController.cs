@@ -37,7 +37,7 @@ namespace AllInOneProject.Controllers
                 return RedirectToAction("Login", "Account");
 
             var responseItems = await _itemService.GetAllItemsAsync();
-            var responseParties = await _partyService.GetAllPartiesAsync();
+            var responseParties = await _partyService.GetAllPartiesAsync("Supplier");
             var purchaseData = await _purchaseService.GetPurchaseDataListAsync();
 
             var pm = new PurchaseViewModel
@@ -59,7 +59,7 @@ namespace AllInOneProject.Controllers
         public async Task<IActionResult> Purchase(PurchaseViewModel model)
         {
             var responseItems = await _itemService.GetAllItemsAsync();
-            var responseParties = await _partyService.GetAllPartiesAsync();
+            var responseParties = await _partyService.GetAllPartiesAsync("Supplier");
             var purchaseData = await _purchaseService.GetPurchaseDataListAsync();
 
             model.itemMasters = ViewBag.Items = responseItems.Data;
@@ -112,7 +112,7 @@ namespace AllInOneProject.Controllers
         {
             var master = await _purchaseService.GetPurchaseMasterDataByIdAsync(id);
             var responseItems = await _itemService.GetAllItemsAsync();
-            var responseParties = await _partyService.GetAllPartiesAsync();
+            var responseParties = await _partyService.GetAllPartiesAsync("Supplier");
             var purchaseData = await _purchaseService.GetPurchaseDataListAsync();
 
             var model = new PurchaseViewModel

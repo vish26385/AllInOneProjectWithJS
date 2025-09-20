@@ -47,6 +47,10 @@
             min-width: 18px; /* ensures round shape even for 2-digit counts */
         }
 
+        .bi-cart {
+            font-size: 1.2rem !important; /* fs-6 equivalent */
+        }        
+
         .navbar-nav .nav-link {
             color: #fff !important;
         }
@@ -141,8 +145,8 @@
                             <li class="nav-item ms-3">
                                 <a href="/Cart/Cart" class="btn btn-outline-light position-relative">
                                     <i class="bi bi-cart"></i>
-                                    <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        0 <!-- dynamic item count -->
+                                    <span id="cart-count">
+                                         <!-- dynamic item count -->
                                     </span>
                                 </a>
                             </li>
@@ -186,6 +190,8 @@
 
             let badge = document.getElementById("cart-count");
             badge.textContent = data.itemCount;
+
+            badge.className = data.itemCount > 0 ? "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" : "";
 
             // hide badge if 0
             badge.style.display = data.itemCount > 0 ? "inline-block" : "none";

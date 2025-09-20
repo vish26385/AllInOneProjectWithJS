@@ -30,7 +30,8 @@ namespace AllInOneProject.Services
             var dtoList = new PartyMasterDTO
             {
                 Id = party.Id,
-                Name = party.Name
+                Name = party.Name,
+                Type = party.Type
             };
 
             return new ServiceResponse<PartyMasterDTO>
@@ -41,9 +42,9 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<List<PartyMasterDTO>>> GetAllPartiesAsync()
+        public async Task<ServiceResponse<List<PartyMasterDTO>>> GetAllPartiesAsync(string? partyType)
         {
-            var parties = await _partyRepository.GetAllPartiesAsync();
+            var parties = await _partyRepository.GetAllPartiesAsync(partyType);
 
             if (parties == null || parties.Count == 0)
             {
@@ -59,7 +60,8 @@ namespace AllInOneProject.Services
             var dtoList = parties.Select(p => new PartyMasterDTO
             {
                 Id = p.Id,
-                Name = p.Name
+                Name = p.Name,
+                Type = p.Type
             }).ToList();
 
             return new ServiceResponse<List<PartyMasterDTO>>
@@ -76,12 +78,13 @@ namespace AllInOneProject.Services
             {
                 var party = new PartyMaster
                 {
-                    Name = request.Name
+                    Name = request.Name,
+                    Type = request.Type
                 };
 
                 var result = await _partyRepository.SavePartyAsync(party);
 
-                var partyMasterDTO = new PartyMasterDTO { Id = result.Id, Name = result.Name };
+                var partyMasterDTO = new PartyMasterDTO { Id = result.Id, Name = result.Name, Type = result.Type };
 
                 return new ServiceResponse<PartyMasterDTO>
                 {
@@ -127,7 +130,8 @@ namespace AllInOneProject.Services
                 var party = new PartyMaster
                 {
                     Id = request.Id,
-                    Name = request.Name
+                    Name = request.Name,
+                    Type = request.Type
                 };
 
                 var result = await _partyRepository.UpdatePartyAsync(party);

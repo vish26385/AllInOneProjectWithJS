@@ -130,7 +130,7 @@ namespace AllInOneProject.Controllers
         [HttpGet]
         public async Task<IActionResult> GetParties()
         {
-            var response = await _partyService.GetAllPartiesAsync();
+            var response = await _partyService.GetAllPartiesAsync("Customer");
             return Ok(response);
         }
 

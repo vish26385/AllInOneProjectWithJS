@@ -10,6 +10,8 @@ namespace AllInOneProject.ViewModels
         [StringLength(100, ErrorMessage = "Party name cannot be longer than 100 characters")]
         public string Name { get; set; }
 
+        public string Type { get; set; }
+
         // Optional: for listing multiple parties in a view (like index page)
         public List<PartyMasterViewModel>? partyMasters { get; set; }
     }

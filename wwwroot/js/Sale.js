@@ -108,6 +108,11 @@ window.onload = function () {
 
     populateItemDropdowns();
 
+    let today = new Date().toISOString().split('T')[0]; // format: yyyy-MM-dd
+
+    document.getElementById("saleDate").value = today;
+    document.getElementById("dueDate").value = today;
+
     const saleDateInput = document.getElementById("saleDate");
     const dueDaysInput = document.getElementById("dueDays");
     const dueDateInput = document.getElementById("dueDate");
