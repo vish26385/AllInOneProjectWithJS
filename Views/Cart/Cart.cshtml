@@ -95,7 +95,7 @@
             // 🔹 Handle not logged in (401 Unauthorized)
             if (response.status === 401) {
                 showMessage("Please login first", false);
-                window.location.href = "/Account/Login";
+                window.location.href = "/Auth/Login";
                 return;
             }
 

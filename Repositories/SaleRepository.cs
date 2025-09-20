@@ -51,7 +51,7 @@ namespace AllInOneProject.Repositories
                             cmd.Parameters.AddWithValue("@SaleDate", saleMaster.SalesDate);
                             cmd.Parameters.AddWithValue("@DueDays", saleMaster.DueDays);
                             cmd.Parameters.AddWithValue("@DueDate", saleMaster.DueDate);
-                            cmd.Parameters.AddWithValue("@PartyId", saleMaster.PartyId);
+                            cmd.Parameters.AddWithValue("@PartyMasterId", saleMaster.PartyMasterId);
                             cmd.Parameters.Add("@SaleMasterId", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                             await cmd.ExecuteNonQueryAsync();
@@ -64,7 +64,7 @@ namespace AllInOneProject.Repositories
                             using var cmdDetail = new SqlCommand("sp_InsertSaleDetail", con, (SqlTransaction)trn);
                             cmdDetail.CommandType = CommandType.StoredProcedure;
                             cmdDetail.Parameters.AddWithValue("@SaleMasterId", saleMasterId);
-                            cmdDetail.Parameters.AddWithValue("@ItemId", item.itemId);
+                            cmdDetail.Parameters.AddWithValue("@ItemId", item.ItemId);
                             cmdDetail.Parameters.AddWithValue("@Qty", item.Qty);
 
                             await cmdDetail.ExecuteNonQueryAsync();
@@ -96,9 +96,9 @@ namespace AllInOneProject.Repositories
                 _context.SalesDet.RemoveRange(detailsToDelete);
                 foreach (var detail in detailsToDelete)
                 {
-                    if (detail.itemId > 0)
+                    if (detail.ItemId > 0)
                     {
-                        itemMaster = _context.Items?.Find(detail.itemId);
+                        itemMaster = _context.Items?.Find(detail.ItemId);
                         itemMaster.CurrentStock = itemMaster.CurrentStock + (decimal)detail.Qty;
                         _context.Entry(itemMaster).State = EntityState.Modified;
                     }
@@ -109,9 +109,9 @@ namespace AllInOneProject.Repositories
             {
                 foreach (var detail in saleMaster.salesDetails)
                 {
-                    if (detail.itemId > 0)
+                    if (detail.ItemId > 0)
                     {
-                        itemMaster = _context.Items?.Find(detail.itemId);
+                        itemMaster = _context.Items?.Find(detail.ItemId);
                         itemMaster.CurrentStock = itemMaster.CurrentStock - (decimal)detail.Qty;
                         _context.Entry(itemMaster).State = EntityState.Modified;
                     }
@@ -135,9 +135,9 @@ namespace AllInOneProject.Repositories
                 var itemMaster = new Item();
                 foreach (var detail in saleMas.salesDetails)
                 {
-                    if (detail.itemId > 0)
+                    if (detail.ItemId > 0)
                     {
-                        itemMaster = _context.Items?.Find(detail.itemId);
+                        itemMaster = _context.Items?.Find(detail.ItemId);
                         itemMaster.CurrentStock = itemMaster.CurrentStock + (decimal)detail.Qty;
                         _context.Entry(itemMaster).State = EntityState.Modified;
                     }
@@ -163,14 +163,14 @@ namespace AllInOneProject.Repositories
                     SaleDate = sm.SalesDate,
                     DueDays = sm.DueDays,
                     DueDate = sm.DueDate,
-                    PartyId = sm.PartyId,
+                    PartyMasterId = sm.PartyMasterId,
                     PartyName = sm.PartyMaster.Name,
                     Qty = sm.salesDetails.Sum(sd => sd.Qty),
                     Amount = sm.salesDetails.Sum(sd => sd.Qty * sd.ItemMaster.Price),
                     salesDetails = sm.salesDetails.Select(sd => new SaleDetailDto
                     {
                         Id = sd.Id,
-                        itemId = sd.itemId,
+                        ItemId = sd.ItemId,
                         SalesMasterId = sd.SalesMasterId,
                         Qty = sd.Qty
                     }).ToList()

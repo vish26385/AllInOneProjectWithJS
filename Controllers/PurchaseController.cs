@@ -30,11 +30,11 @@ namespace AllInOneProject.Controllers
             _partyService = partyService;
             _purchaseService = purchaseService;
         }
-        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
         public async Task<IActionResult> Purchase()
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
             var responseItems = await _itemService.GetAllItemsAsync();
             var responseParties = await _partyService.GetAllPartiesAsync("Supplier");
@@ -85,14 +85,14 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> SavePurchase(PurchaseViewModel model)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
             // Map ViewModel → DTO //User PartyMasterRequest for Save and Update
             var request = new PurchaseMasterRequest
             {
                 PurchaseDate = model.purchaseMaster.PurchaseDate,
-                PartyId = model.purchaseMaster.PartyId,
+                PartyMasterId = model.purchaseMaster.PartyMasterId,
                 PurchaseDetailRequests = model.purchaseMaster.purchaseDetails.Select(d => new PurchaseDetailRequest
                 {
                     PurchaseMasterId = d.PurchaseMasterId,
@@ -128,15 +128,15 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdatePurchase(PurchaseViewModel model)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
             // Map ViewModel → DTO //User PartyMasterRequest for Save and Update
             var request = new PurchaseMasterRequest
             {
                 Id = model.purchaseMaster.Id,
                 PurchaseDate = model.purchaseMaster.PurchaseDate,
-                PartyId = model.purchaseMaster.PartyId,
+                PartyMasterId = model.purchaseMaster.PartyMasterId,
                 PurchaseDetailRequests = model.purchaseMaster.purchaseDetails.Select(d => new PurchaseDetailRequest
                 {
                     PurchaseMasterId = d.PurchaseMasterId,
@@ -153,8 +153,8 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePurchase(int id)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
             var response = await _purchaseService.DeletePurchaseDataAsync(id);
 

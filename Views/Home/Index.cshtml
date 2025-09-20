@@ -14,10 +14,10 @@
         </p>
         @if (!User.Identity.IsAuthenticated)
         {
-            <a href="/Account/Register" class="btn btn-primary btn-lg me-2">
+            <a href="/Auth/Register" class="btn btn-primary btn-lg me-2">
                 <i class="bi bi-person-plus"></i> Get Started
             </a>
-            <a href="/Account/Login" class="btn btn-outline-primary btn-lg">
+            <a href="/Auth/Login" class="btn btn-outline-primary btn-lg">
                 <i class="bi bi-box-arrow-in-right"></i> Login
             </a>
         }

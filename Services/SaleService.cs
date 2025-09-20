@@ -32,10 +32,10 @@ namespace AllInOneProject.Services
                     SalesDate = request.SaleDate,
                     DueDays = request.DueDays,
                     DueDate = request.DueDate,
-                    PartyId = request.PartyId,
+                    PartyMasterId = request.PartyMasterId,
                     salesDetails = request.SalesDetailRequests.Select(d => new SalesDetail
                     {
-                        itemId = d.ItemId,
+                        ItemId = d.ItemId,
                         Qty = d.Qty
                     }).ToList()
                 };
@@ -119,12 +119,12 @@ namespace AllInOneProject.Services
                 saleMaster.SalesDate = request.SaleDate;
                 saleMaster.DueDays = request.DueDays;
                 saleMaster.DueDate = request.DueDate;
-                saleMaster.PartyId = request.PartyId;
+                saleMaster.PartyMasterId = request.PartyMasterId;
                 saleMaster.salesDetails = request.SalesDetailRequests.Select(d => new SalesDetail
                 {
                     Id = d.Id,
                     SalesMasterId = d.SaleMasterId,
-                    itemId = d.ItemId,
+                    ItemId = d.ItemId,
                     Qty = d.Qty
                 }).ToList();
 

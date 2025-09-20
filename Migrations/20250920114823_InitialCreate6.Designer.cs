@@ -4,6 +4,7 @@ using AllInOneProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AllInOneProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250920114823_InitialCreate6")]
+    partial class InitialCreate6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,15 +107,12 @@ namespace AllInOneProject.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ItemId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Carts");
                 });
@@ -154,13 +154,10 @@ namespace AllInOneProject.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -249,7 +246,7 @@ namespace AllInOneProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("PartyMasterId")
+                    b.Property<int>("PartyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("PurchaseDate")
@@ -257,7 +254,7 @@ namespace AllInOneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PartyMasterId");
+                    b.HasIndex("PartyId");
 
                     b.ToTable("PurchaseMaster");
                 });
@@ -270,20 +267,20 @@ namespace AllInOneProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
                     b.Property<int>("SalesMasterId")
                         .HasColumnType("int");
 
+                    b.Property<int>("itemId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
-
                     b.HasIndex("SalesMasterId");
+
+                    b.HasIndex("itemId");
 
                     b.ToTable("SalesDet");
                 });
@@ -302,7 +299,7 @@ namespace AllInOneProject.Migrations
                     b.Property<int>("DueDays")
                         .HasColumnType("int");
 
-                    b.Property<int>("PartyMasterId")
+                    b.Property<int>("PartyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("SalesDate")
@@ -310,7 +307,7 @@ namespace AllInOneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PartyMasterId");
+                    b.HasIndex("PartyId");
 
                     b.ToTable("SalesMas");
                 });
@@ -489,26 +486,7 @@ namespace AllInOneProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AllInOneProject.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
                     b.Navigation("item");
-                });
-
-            modelBuilder.Entity("AllInOneProject.Models.Order", b =>
-                {
-                    b.HasOne("AllInOneProject.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AllInOneProject.Models.OrderItem", b =>
@@ -551,7 +529,7 @@ namespace AllInOneProject.Migrations
                 {
                     b.HasOne("AllInOneProject.Models.PartyMaster", "PartyMaster")
                         .WithMany()
-                        .HasForeignKey("PartyMasterId")
+                        .HasForeignKey("PartyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -560,15 +538,15 @@ namespace AllInOneProject.Migrations
 
             modelBuilder.Entity("AllInOneProject.Models.SalesDetail", b =>
                 {
-                    b.HasOne("AllInOneProject.Models.Item", "ItemMaster")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AllInOneProject.Models.SalesMaster", "SalesMaster")
                         .WithMany("salesDetails")
                         .HasForeignKey("SalesMasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AllInOneProject.Models.Item", "ItemMaster")
+                        .WithMany()
+                        .HasForeignKey("itemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -581,7 +559,7 @@ namespace AllInOneProject.Migrations
                 {
                     b.HasOne("AllInOneProject.Models.PartyMaster", "PartyMaster")
                         .WithMany()
-                        .HasForeignKey("PartyMasterId")
+                        .HasForeignKey("PartyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

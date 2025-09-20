@@ -229,7 +229,7 @@ async function saveSalesData() {
         SaleDate: saleDate,
         DueDays: parseInt(dueDays),
         DueDate: dueDate,
-        PartyId: parseInt(partyId),
+        PartyMasterId: parseInt(partyId),
         SalesDetailRequests: saleDetails
     };
 
@@ -252,8 +252,10 @@ async function saveSalesData() {
 function editSale(id, saleDate, dueDays, dueDate, partyId, button) {
     const salesDetails = JSON.parse(button.getAttribute("data-salesdetails"));
     document.getElementById("saleMasterId").value = id;
+    //let saleTDate = new Date(saleDate).toISOString().split('T')[0];
     document.getElementById("saleDate").value = saleDate;
     document.getElementById("dueDays").value = dueDays;
+    //let dueTDate = new Date(dueDate).toISOString().split('T')[0];
     document.getElementById("dueDate").value = dueDate;
     document.getElementById("partyId").value = partyId;
     document.getElementById("btnSave").onclick = updateSalesData;
@@ -276,12 +278,12 @@ function editSale(id, saleDate, dueDays, dueDate, partyId, button) {
         const saleMasterId = row.querySelector(".saleMasterId");
         const saleDetailId = row.querySelector(".saleDetailId");
 
-        if (select.itemId) {
-            item.value = select.itemId;
+        if (select.ItemId) {
+            item.value = select.ItemId;
             qty.value = select.Qty;
             saleMasterId.value = select.SalesMasterId;
             saleDetailId.value = select.Id;
-            updateItemPrice(row, select.itemId);
+            updateItemPrice(row, select.ItemId);
         }
 
         tbody.appendChild(row);
@@ -348,7 +350,7 @@ async function updateSalesData() {
         SaleDate: saleDate,
         DueDays: parseInt(dueDays),
         DueDate: dueDate,
-        PartyId: parseInt(partyId),
+        PartyMasterId: parseInt(partyId),
         SalesDetailRequests: saleDetails,
         DeletedSaleDetailIds: deletedSaleDetailIds
     };

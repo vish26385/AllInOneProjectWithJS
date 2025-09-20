@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AllInOneProject.Models
 {
@@ -6,10 +7,10 @@ namespace AllInOneProject.Models
     {
         public int Id { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }   // changed from int → string
+        public ApplicationUser User { get; set; }   // navigation property
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
-
         public List<OrderItem> OrderItems { get; set; }
     }
 }

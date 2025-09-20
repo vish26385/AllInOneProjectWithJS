@@ -12,8 +12,8 @@ namespace AllInOneProject.Repositories
         Task<bool> DeleteItemAsync(int id);
         Task<Item?> GetItemByIdAsync(int id);
         Task<List<Item>> GetAllItemsAsync();
-        Task<List<Item>> GetUserCartItemsAsync(int userId);
+        Task<List<Item>> GetUserCartItemsAsync(string userId);
         Task<Cart> AddToCartAsync(Cart cartItem);
-        Task<bool> RemoveFromCartAsync(int itemId, int userId);
+        Task<bool> RemoveFromCartAsync(int itemId, string userId);
     }
 }

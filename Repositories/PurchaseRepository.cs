@@ -51,7 +51,7 @@ namespace AllInOneProject.Repositories
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.AddWithValue("@PurchaseDate", purchaseMaster.PurchaseDate);
-                            cmd.Parameters.AddWithValue("@PartyId", purchaseMaster.PartyId);
+                            cmd.Parameters.AddWithValue("@PartyMasterId", purchaseMaster.PartyMasterId);
                             cmd.Parameters.Add("@PurchaseMasterId", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.Output;
 
                             await cmd.ExecuteNonQueryAsync();
@@ -90,7 +90,7 @@ namespace AllInOneProject.Repositories
                 return 0;
 
             existing.PurchaseDate = purchaseMaster.PurchaseDate;
-            existing.PartyId = purchaseMaster.PartyId;
+            existing.PartyMasterId = purchaseMaster.PartyMasterId;
 
             var itemMaster = new Item();
             _context.PurchaseDetails.RemoveRange(existing.purchaseDetails);

@@ -15,11 +15,11 @@ namespace AllInOneProject.Controllers
         {
             _itemService = itemService;
         }
-        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);   
+        //private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);   
         public async Task<IActionResult> Item()
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
             var response = await _itemService.GetAllItemsAsync();
             return View(response.Data);
@@ -27,8 +27,8 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertItem([FromBody] ItemRequest request)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return Unauthorized(new { message = "User not logged in" });
+            //if (string.IsNullOrEmpty(UserId))
+            //    return Unauthorized(new { message = "User not logged in" });
 
             if (!ModelState.IsValid)
             {
@@ -50,8 +50,8 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateItem([FromBody] ItemRequest request)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return Unauthorized(new { message = "User not logged in" });
+            //if (string.IsNullOrEmpty(UserId))
+            //    return Unauthorized(new { message = "User not logged in" });
 
             if (!ModelState.IsValid)
             {
@@ -73,8 +73,8 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteItem([FromBody] int id)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return Unauthorized(new { message = "User not logged in" });
+            //if (string.IsNullOrEmpty(UserId))
+            //    return Unauthorized(new { message = "User not logged in" });
 
             var response = await _itemService.DeleteItemAsync(id);
 

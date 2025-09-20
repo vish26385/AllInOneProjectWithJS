@@ -11,8 +11,8 @@ namespace AllInOneProject.Services
         Task<ServiceResponse<bool>> DeleteItemAsync(int id);
         Task<ServiceResponse<List<ItemDto>>> GetAllItemsAsync();
         Task<ServiceResponse<ItemDto>> GetItemByIdAsync(int id);
-        Task<ServiceResponse<List<ItemDto>>> GetUserCartItemsAsync(int userId);
-        Task<ServiceResponse<CartDto>> AddToCartAsync(int itemId, int userId);
-        Task<ServiceResponse<bool>> RemoveFromCartAsync(int itemId, int userId);
+        Task<ServiceResponse<List<ItemDto>>> GetUserCartItemsAsync(string userId);
+        Task<ServiceResponse<CartDto>> AddToCartAsync(int itemId, string userId);
+        Task<ServiceResponse<bool>> RemoveFromCartAsync(int itemId, string userId);
     }
 }

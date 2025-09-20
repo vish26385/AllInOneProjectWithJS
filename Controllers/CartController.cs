@@ -1,4 +1,5 @@
-﻿using AllInOneProject.Services;
+﻿using AllInOneProject.Models;
+using AllInOneProject.Services;
 using iText.IO.Font;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
@@ -7,6 +8,7 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Globalization;
@@ -20,29 +22,31 @@ namespace AllInOneProject.Controllers
         private readonly IItemService _itemService;
         private readonly IOrderService _orderService;
         private readonly ICartService _cartService;
-        public CartController(IItemService itemService, IOrderService orderService, ICartService cartService) 
+        private readonly UserManager<ApplicationUser> _userManager;
+        public CartController(UserManager<ApplicationUser> userManager, IItemService itemService, IOrderService orderService, ICartService cartService) 
         {
+            _userManager = userManager;
             _itemService = itemService;
             _orderService = orderService;
             _cartService = cartService;
         }
-        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+        private string? UserId => _userManager.GetUserId(User);
 
         public async Task<IActionResult> Cart()
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
-            var response = await _itemService.GetUserCartItemsAsync(Convert.ToInt32(UserId));
+            var response = await _itemService.GetUserCartItemsAsync(UserId);
             return View(response.Data);
         }
         [HttpPost]
         public async Task<IActionResult> AddToCart(int itemId)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return Unauthorized(new { message = "User not logged in" });
+            //if (string.IsNullOrEmpty(UserId))
+            //    return Unauthorized(new { message = "User not logged in" });
 
-            var response = await _itemService.AddToCartAsync(itemId, Convert.ToInt32(UserId));
+            var response = await _itemService.AddToCartAsync(itemId, UserId);
 
             if (!response.Success)
                 return BadRequest(response);
@@ -52,10 +56,10 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int itemId)
         {
-            if (string.IsNullOrEmpty(UserId))
-                return Unauthorized(new { message = "User not logged in" });
+            //if (string.IsNullOrEmpty(UserId))
+            //    return Unauthorized(new { message = "User not logged in" });
 
-            var response = await _itemService.RemoveFromCartAsync(itemId, Convert.ToInt32(UserId));
+            var response = await _itemService.RemoveFromCartAsync(itemId, UserId);
 
             if (!response.Success)
                 return BadRequest(response);
@@ -66,11 +70,11 @@ namespace AllInOneProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Checkout()
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
 
             // Get cart items of user
-            var cartItems = await _cartService.GetCartItemsAsync(Convert.ToInt32(UserId));
+            var cartItems = await _cartService.GetCartItemsAsync(UserId);
 
             if (cartItems.Data == null || !cartItems.Data.Any())
             {
@@ -79,7 +83,7 @@ namespace AllInOneProject.Controllers
             }
 
             // Save order
-            var response = await _orderService.PlaceOrderAsync(Convert.ToInt32(UserId), cartItems.Data);
+            var response = await _orderService.PlaceOrderAsync(UserId, cartItems.Data);
             var orderId = 0;
             if (response.Data == null)
             {
@@ -92,7 +96,7 @@ namespace AllInOneProject.Controllers
             if (orderId > 0)
             {
                 // Clear cart after successful order
-                await _cartService.ClearCartAsync(Convert.ToInt32(UserId));
+                await _cartService.ClearCartAsync(UserId);
 
                 TempData["Success"] = "Your order has been placed successfully!";
                 return RedirectToAction("OrderConfirmation", new { id = orderId });
@@ -229,7 +233,7 @@ namespace AllInOneProject.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCartCount()
         {
-            var response = await _cartService.GetCartItemsAsync(Convert.ToInt32(UserId));
+            var response = await _cartService.GetCartItemsAsync(UserId);
             int itemCount = response.Data.Sum(c => c.Quantity);
             return Json(new { itemCount });
         }   

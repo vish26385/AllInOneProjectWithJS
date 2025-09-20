@@ -21,7 +21,7 @@
                 {
                     <tr>
                         <input readonly type="hidden" id="idDueDays" value="@item.DueDays" />
-                        <input readonly type="hidden" id="idPartyId" value="@item.PartyId" />
+                        <input readonly type="hidden" id="idPartyId" value="@item.PartyMasterId" />
 
                         <td style="padding: 10px;">
                             <input readonly type="number" id="idSaleMasterId" value="@item.Id"
@@ -50,7 +50,7 @@
                         <td style="padding: 10px;">
                             <button type="button" id="btnEdit"
                                     data-salesdetails='@Html.Raw(JsonSerializer.Serialize(item.salesDetails))'
-                                    onclick="editSale(@item.Id,'@item.SaleDate',@item.DueDays,'@item.DueDate',@item.PartyId, this)" class="btn btn-sm btn-warning me-1">
+                                    onclick="editSale(@item.Id,'@item.SaleDate.ToString("yyyy-MM-dd")',@item.DueDays,'@item.DueDate.ToString("yyyy-MM-dd")',@item.PartyMasterId, this)" class="btn btn-sm btn-warning me-1">
                                 ✎ Edit
                             </button>
                             <button type="button" id="btnDelete" onclick="deleteSalesData(@item.Id)" class="btn btn-sm btn-danger me-1">

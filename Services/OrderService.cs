@@ -9,7 +9,7 @@ namespace AllInOneProject.Services
 {
     public interface IOrderService
     {
-        Task<ServiceResponse<OrderDto>> PlaceOrderAsync(int userId, List<CartDto> cartItems);
+        Task<ServiceResponse<OrderDto>> PlaceOrderAsync(string userId, List<CartDto> cartItems);
         Task<ServiceResponse<OrderDto>> GetOrderByIdAsync(int orderId);
     }
 
@@ -23,7 +23,7 @@ namespace AllInOneProject.Services
             _orderRepository = orderRepository;
         }
 
-        public async Task<ServiceResponse<OrderDto>> PlaceOrderAsync(int userId, List<CartDto> cartItems)
+        public async Task<ServiceResponse<OrderDto>> PlaceOrderAsync(string userId, List<CartDto> cartItems)
         {
             try
             {

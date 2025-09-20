@@ -24,11 +24,11 @@ namespace AllInOneProject.Controllers
             _partyService = partyService;
             _saleService = saleService;
         }
-        private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //private string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
         public async Task<IActionResult> Sale()
         {
-            if (string.IsNullOrEmpty(UserId))
-                return RedirectToAction("Login", "Account");
+            //if (string.IsNullOrEmpty(UserId))
+            //    return RedirectToAction("Login", "Account");
             ////****Type Of IOrderedQueryable<SalesMaster>****////
             //var query = from s in _context.SalesMas
             //                .Include(s => s.PartyMaster)

@@ -187,7 +187,7 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<List<ItemDto>>> GetUserCartItemsAsync(int userId)
+        public async Task<ServiceResponse<List<ItemDto>>> GetUserCartItemsAsync(string userId)
         {
             var cartItems = await _repository.GetUserCartItemsAsync(userId);
 
@@ -214,7 +214,7 @@ namespace AllInOneProject.Services
             };
         }
 
-        public async Task<ServiceResponse<CartDto>> AddToCartAsync(int itemId, int userId)
+        public async Task<ServiceResponse<CartDto>> AddToCartAsync(int itemId, string userId)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace AllInOneProject.Services
             }
         }
 
-        public async Task<ServiceResponse<bool>> RemoveFromCartAsync(int itemId, int userId)
+        public async Task<ServiceResponse<bool>> RemoveFromCartAsync(int itemId, string userId)
         {
             try
             {

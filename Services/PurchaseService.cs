@@ -39,7 +39,7 @@ namespace AllInOneProject.Services
                 {
                     Id = result.Id,
                     PurchaseDate = result.PurchaseDate,
-                    PartyId = result.PartyId,
+                    PartyMasterId = result.PartyMasterId,
                     purchaseDetails = result.purchaseDetails.Select(d => new PurchaseDetailDTO
                     {
                         Id = d.Id,
@@ -90,7 +90,7 @@ namespace AllInOneProject.Services
                 var purchaseMaster = new PurchaseMaster
                 {
                     PurchaseDate = request.PurchaseDate,
-                    PartyId = request.PartyId,
+                    PartyMasterId = request.PartyMasterId,
                     purchaseDetails = request.PurchaseDetailRequests.Select(d => new PurchaseDetail
                     {
                         PurchaseMasterId = d.PurchaseMasterId,
@@ -168,7 +168,7 @@ namespace AllInOneProject.Services
                 {
                     Id = request.Id,
                     PurchaseDate = request.PurchaseDate,
-                    PartyId = request.PartyId,
+                    PartyMasterId = request.PartyMasterId,
                     purchaseDetails = request.PurchaseDetailRequests.Select(d => new PurchaseDetail
                     {
                         PurchaseMasterId = d.PurchaseMasterId,
@@ -240,7 +240,7 @@ namespace AllInOneProject.Services
                     {
                         Id = purchase.Id,
                         PurchaseDate = purchase.PurchaseDate,
-                        PartyId = purchase.PartyId,
+                        PartyMasterId = purchase.PartyMasterId,
                         PartyName = purchase.PartyMaster.Name,
                         purchaseDetails = purchase.purchaseDetails.Select(d => new PurchaseDetailDTO
                         {

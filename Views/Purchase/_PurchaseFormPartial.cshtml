@@ -21,11 +21,11 @@
         <!-- Party -->
         <div class="form-group" style="display: flex; align-items: center; gap:4px;">
             <label class="form-label mb-1">Party</label>
-            <select class="form-select" name="purchaseMaster.PartyId" style="width:200px;">
+            <select class="form-select" name="purchaseMaster.PartyMasterId" style="width:200px;">
                 <option value="0">-- Select Party --</option>
                 @foreach (var item in Model.partyMasters)
                 {
-                    if (Model.purchaseMaster?.PartyId == item.Id)
+                    if (Model.purchaseMaster?.PartyMasterId == item.Id)
                     {
                         <option value="@item.Id" selected>@item.Name</option>
                     }

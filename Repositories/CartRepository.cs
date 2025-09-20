@@ -8,8 +8,8 @@ namespace AllInOneProject.Repositories
 {
     public interface ICartRepository
     {
-        Task<List<Cart?>> GetCartItemsAsync(int userId);
-        Task ClearCartAsync(int userId);
+        Task<List<Cart?>> GetCartItemsAsync(string userId);
+        Task ClearCartAsync(string userId);
     }
 
     public class CartRepository : ICartRepository
@@ -21,7 +21,7 @@ namespace AllInOneProject.Repositories
             _context = context;
         }
 
-        public async Task<List<Cart?>> GetCartItemsAsync(int userId)
+        public async Task<List<Cart?>> GetCartItemsAsync(string userId)
         {
             return await _context.Carts
                 .Include(c => c.item)  // so you can access Item details like Price, Name
@@ -29,7 +29,7 @@ namespace AllInOneProject.Repositories
                 .ToListAsync();
         }
 
-        public async Task ClearCartAsync(int userId)
+        public async Task ClearCartAsync(string userId)
         {
             var items = _context.Carts.Where(c => c.UserId == userId);
             _context.Carts.RemoveRange(items);

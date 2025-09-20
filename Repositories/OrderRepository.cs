@@ -7,7 +7,7 @@ namespace AllInOneProject.Repositories
 {
     public interface IOrderRepository
     {
-        Task<Order> PlaceOrderAsync(int userId, List<Cart> cartItems);
+        Task<Order> PlaceOrderAsync(string userId, List<Cart> cartItems);
         Task<Order> GetOrderByIdAsync(int orderId);
     }
     public class OrderRepository : IOrderRepository
@@ -19,7 +19,7 @@ namespace AllInOneProject.Repositories
             _context = context;
         }
 
-        public async Task<Order> PlaceOrderAsync(int userId, List<Cart> cartItems)
+        public async Task<Order> PlaceOrderAsync(string userId, List<Cart> cartItems)
         {
             var order = new Order
             {

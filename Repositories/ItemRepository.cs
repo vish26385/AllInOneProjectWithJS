@@ -89,7 +89,7 @@ namespace AllInOneProject.Repositories
             return await _context.Items.FindAsync(id);
         }
 
-        public async Task<List<Item>> GetUserCartItemsAsync(int userId)
+        public async Task<List<Item>> GetUserCartItemsAsync(string userId)
         {
             var cartItems = await _context.Carts
                 .Include(c => c.item)
@@ -108,7 +108,7 @@ namespace AllInOneProject.Repositories
             return cartItem; // entity with generated Id
         }
 
-        public async Task<bool> RemoveFromCartAsync(int itemId, int userId)
+        public async Task<bool> RemoveFromCartAsync(int itemId, string userId)
         {
             var cartItem = await _context.Carts.FirstOrDefaultAsync(x => x.ItemId == itemId && x.UserId == userId);
             if (cartItem == null) return false;

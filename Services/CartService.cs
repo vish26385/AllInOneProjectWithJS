@@ -11,8 +11,8 @@ namespace AllInOneProject.Services
 {
     public interface ICartService
     {
-        Task<ServiceResponse<List<CartDto>>> GetCartItemsAsync(int userId);
-        Task ClearCartAsync(int userId);
+        Task<ServiceResponse<List<CartDto>>> GetCartItemsAsync(string userId);
+        Task ClearCartAsync(string userId);
     }
 
     public class CartService : ICartService
@@ -24,7 +24,7 @@ namespace AllInOneProject.Services
             _cartRepository = cartRepository;
         }
 
-        public async Task<ServiceResponse<List<CartDto>>> GetCartItemsAsync(int userId)
+        public async Task<ServiceResponse<List<CartDto>>> GetCartItemsAsync(string userId)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace AllInOneProject.Services
             }
         }
 
-        public async Task ClearCartAsync(int userId)
+        public async Task ClearCartAsync(string userId)
         {
             try
             {
