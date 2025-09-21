@@ -24,55 +24,114 @@
     </div>
 
     <div class="container my-5">
-        <!-- Top row (centered) -->
-        <div class="row justify-content-center g-4">
-            <div class="col-lg-4 col-md-6 col-sm-10">
-                <div class="card h-100 shadow-sm border-0 feature-card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-box display-5 text-primary"></i>
-                        <h5 class="card-title mt-3">Item Master</h5>
-                        <p class="card-text text-muted">Manage and organize your items with a clean interface.</p>
-                        <a href="/Item/Item" class="btn btn-sm btn-outline-primary">Go to Items</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <!-- Top row (centered) -->
+            <div class="row justify-content-center g-4">
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-box display-5 text-primary"></i>
+                            <h5 class="card-title mt-3">Item Master</h5>
+                            <p class="card-text text-muted">Manage and organize your items with a clean interface.</p>
+                            <a href="/Item/Item" class="btn btn-sm btn-outline-primary">Go to Items</a>
+                        </div>
+                    </div>
+                </div>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-10">
+                        <div class="card h-100 shadow-sm border-0 feature-card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-people display-5 text-success"></i>
+                                <h5 class="card-title mt-3">Party Master</h5>
+                                <p class="card-text text-muted">Maintain your clients/parties with contact and account details.</p>
+                                <a href="/Party/Party" class="btn btn-sm btn-outline-success">Go to Parties</a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+
+            <!-- space between rows -->
+            <div class="row justify-content-center g-4 mt-2">
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-clipboard-plus display-5 text-warning"></i>
+                            <h5 class="card-title mt-3">Purchase Transactions</h5>
+                            <p class="card-text text-muted">Track purchase entries and manage transaction history.</p>
+                            <a href="/Purchase/Purchase" class="btn btn-sm btn-outline-warning">Go to Purchases</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-cash-coin display-5 text-success"></i>
+                            <h5 class="card-title mt-3">Sale Transactions</h5>
+                            <p class="card-text text-muted">Track sale entries and manage transaction history.</p>
+                            <a href="/Sale/Sale" class="btn btn-sm btn-outline-success">Go to Sales</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Top row (centered) -->
+            <div class="row justify-content-center g-4">
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-box display-5 text-primary"></i>
+                            <h5 class="card-title mt-3">Item Master</h5>
+                            <p class="card-text text-muted">Manage and organize your items with a clean interface.</p>
+                            <a href="/Item/Item" class="btn btn-sm btn-outline-primary">Go to Items</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people display-5 text-success"></i>
+                            <h5 class="card-title mt-3">Party Master</h5>
+                            <p class="card-text text-muted">Maintain your clients/parties with contact and account details.</p>
+                            <a href="/Party/Party" class="btn btn-sm btn-outline-success">Go to Parties</a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-4 col-md-6 col-sm-10">
-                <div class="card h-100 shadow-sm border-0 feature-card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-people display-5 text-success"></i>
-                        <h5 class="card-title mt-3">Party Master</h5>
-                        <p class="card-text text-muted">Maintain your clients/parties with contact and account details.</p>
-                        <a href="/Party/Party" class="btn btn-sm btn-outline-success">Go to Parties</a>
+            <!-- space between rows -->
+            <div class="row justify-content-center g-4 mt-2">
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-clipboard-plus display-5 text-warning"></i>
+                            <h5 class="card-title mt-3">Purchase Transactions</h5>
+                            <p class="card-text text-muted">Track purchase entries and manage transaction history.</p>
+                            <a href="/Purchase/Purchase" class="btn btn-sm btn-outline-warning">Go to Purchases</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- space between rows -->
-        <div class="row justify-content-center g-4 mt-2">
-            <div class="col-lg-4 col-md-6 col-sm-10">
-                <div class="card h-100 shadow-sm border-0 feature-card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-clipboard-plus display-5 text-warning"></i>
-                        <h5 class="card-title mt-3">Purchase Transactions</h5>
-                        <p class="card-text text-muted">Track purchase entries and manage transaction history.</p>
-                        <a href="/Purchase/Purchase" class="btn btn-sm btn-outline-warning">Go to Purchases</a>
+                <div class="col-lg-4 col-md-6 col-sm-10">
+                    <div class="card h-100 shadow-sm border-0 feature-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-cash-coin display-5 text-success"></i>
+                            <h5 class="card-title mt-3">Sale Transactions</h5>
+                            <p class="card-text text-muted">Track sale entries and manage transaction history.</p>
+                            <a href="/Sale/Sale" class="btn btn-sm btn-outline-success">Go to Sales</a>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-4 col-md-6 col-sm-10">
-                <div class="card h-100 shadow-sm border-0 feature-card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-cash-coin display-5 text-success"></i>
-                        <h5 class="card-title mt-3">Sale Transactions</h5>
-                        <p class="card-text text-muted">Track sale entries and manage transaction history.</p>
-                        <a href="/Sale/Sale" class="btn btn-sm btn-outline-success">Go to Sales</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 
 
@@ -81,11 +140,27 @@
 <!-- Features Section -->
 <style>
     /* keeps cards nicely sized and vertically balanced */
-    .feature-card { min-height: 250px; }
-    .feature-card .card-body { display: flex; flex-direction: column; justify-content: center; }
-    .feature-card .display-5 { font-size: 2.6rem; }
+    .feature-card {
+        min-height: 250px;
+    }
+
+        .feature-card .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-card .display-5 {
+            font-size: 2.6rem;
+        }
+
     @@media (max-width: 576px) {
-      .feature-card { min-height: 260px; }
-      .feature-card .display-5 { font-size: 2.2rem; }
+        .feature-card {
+            min-height: 260px;
+        }
+
+            .feature-card .display-5 {
+                font-size: 2.2rem;
+            }
     }
 </style>

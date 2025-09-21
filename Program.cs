@@ -1,4 +1,4 @@
-using AllInOneProject.Data;
+﻿using AllInOneProject.Data;
 using AllInOneProject.Models;
 using AllInOneProject.Repositories;
 using AllInOneProject.Services;
@@ -13,15 +13,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Auth/Login"; // redirect to your login page if not authenticated
-        options.AccessDeniedPath = "/Auth/Login"; // redirect to your login page if not authenticated
-        options.LogoutPath = "/Auth/Logout";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-        options.SlidingExpiration = true;
-    });
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        options.LoginPath = "/Auth/Login"; // redirect to your login page if not authenticated
+//        options.AccessDeniedPath = "/Auth/Login"; // redirect to your login page if not authenticated
+//        options.LogoutPath = "/Auth/Logout";
+//        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+//        options.SlidingExpiration = true;
+//    });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -33,6 +33,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";        // 👈 redirect here when not logged in
+    options.LogoutPath = "/Auth/Logout";      // optional
+    options.AccessDeniedPath = "/Auth/AccessDenied"; // optional
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    options.SlidingExpiration = true;
+});
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();    

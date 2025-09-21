@@ -107,21 +107,29 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">                        
                         @if (User.Identity.IsAuthenticated)
                         {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Role">
+                                        <i class="bi bi-shield-lock"></i> Manage Roles
+                                    </a>
+                                </li>
+                            }
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Item" asp-action="Item">Items</a>
+                                <a class="nav-link" asp-area="" asp-controller="Item" asp-action="Item"><i class="bi bi-box"></i> Items</a>
                             </li>
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Party" asp-action="Party">Parties</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Purchase" asp-action="Purchase">Purchases</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Sale" asp-action="Sale">Sales</a>
+                                    <a class="nav-link" asp-area="" asp-controller="Party" asp-action="Party"><i class="bi bi-people"></i> Parties</a>
                                 </li>
                             }
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Purchase" asp-action="Purchase"><i class="bi bi-clipboard-plus"></i> Purchases</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Sale" asp-action="Sale"><i class="bi bi-cash-coin"></i> Sales</a>
+                            </li>
                         }
                     </ul>
                     <ul class="navbar-nav ms-auto">
