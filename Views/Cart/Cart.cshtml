@@ -123,18 +123,22 @@
               // auto hide after 2s
               setTimeout(() => {
                   msgBox.classList.remove("show");
-              }, 2000);            
+              }, 2000);
 
             if (result.success) {
                 const row = btn.closest('tr');
                 if (row) row.remove();
 
-                window.location.href = '/Cart/Cart';
+                //window.location.href = '/Cart/Cart';
+
+                setTimeout(() => {
+                    window.location.href = '/Cart/Cart';
+                }, 1000);
             }
         } catch (error) {
             console.error('Error:', error);
         }
-    }   
+    }
 </script>
 
 <!-- Bootstrap Icons -->

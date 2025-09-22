@@ -30,7 +30,7 @@ namespace AllInOneProject.Services
 
                 var result = await _repository.InsertItemAsync(item);
 
-                var dto = new ItemDto { Id = result.Id, Name = result.Name, Price = result.Price };
+                var dto = new ItemDto { Id = result.Id, Name = result.Name, Price = result.Price, CurrentStock = result.CurrentStock };
 
                 return new ServiceResponse<ItemDto>
                 {

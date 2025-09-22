@@ -17,7 +17,7 @@
                         <label for="itemPrice" class="form-label">Item Price</label>
                         <input type="number" class="form-control" step="0.01" id="itemPrice" placeholder="Enter item price" required />
                     </div>
-
+                    <input type="hidden" type="number" id="itemCurrentStock" />
                     <button type="button" id="btnItemSave" class="btn btn-primary w-100" onclick="insertItem()">Save</button>
                 </form>
                 <div class="notification" id="itemMessage"></div>
@@ -50,7 +50,7 @@
                                 <td class="itemCurrentStock">@item.CurrentStock</td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-warning me-1"
-                                            onclick="editItem(@item.Id,'@item.Name',@item.Price, this)">
+                                            onclick="editItem(@item.Id,'@item.Name',@item.Price,@item.CurrentStock,this)">
                                         ✎ Edit
                                     </button>
                                     <button type="button" class="btn btn-sm btn-danger me-1"
@@ -81,7 +81,7 @@
     async function insertItem() {
         const name = document.getElementById('itemName').value;
         const price = parseFloat(document.getElementById('itemPrice').value);
-       
+
         try {
                 const response = await fetch('/Item/InsertItem', {
                 method: 'POST',
@@ -126,9 +126,10 @@
                     newRow.innerHTML = `
                         <td class="itemName">${result.data.name}</td>
                         <td class="itemPrice">${parseFloat(result.data.price).toFixed(2)}</td>
+                        <td class="itemCurrentStock">${parseFloat(result.data.currentStock).toFixed(2)}</td>
                         <td>
                             <button type="button" class="btn btn-sm btn-warning me-1"
-                                    onclick="editItem(${result.data.id}, '${result.data.name}', ${result.data.price}, this)">
+                                    onclick="editItem(${result.data.id}, '${result.data.name}', ${result.data.price}, ${result.data.currentStock}, this)">
                                 ✎ Edit
                             </button>
                             <button type="button" class="btn btn-sm btn-danger me-1"
@@ -152,10 +153,12 @@
         }
     }
 
-    function editItem(id, name, price, btnInRow) {
+    function editItem(id, name, price, currentstock, btnInRow) {
         document.getElementById('itemId').value = id;
         document.getElementById('itemName').value = name;
         document.getElementById('itemPrice').value = price;
+        document.getElementById('itemCurrentStock').value = currentstock;
+
         const btn = document.getElementById('btnItemSave');
 
         btn._editingRow = btnInRow.closest('tr');
@@ -173,6 +176,7 @@
         const id = document.getElementById('itemId').value;
         const name = document.getElementById('itemName').value;
         const price = parseFloat(document.getElementById('itemPrice').value);
+        const currentstock = parseFloat(document.getElementById('itemCurrentStock').value);
 
         try {
             const response = await fetch('/Item/UpdateItem', {
@@ -212,13 +216,15 @@
                 if (row.rowIndex >= 0) {
                     row.querySelector('.itemName').textContent = name;
                     row.querySelector('.itemPrice').textContent = parseFloat(price).toFixed(2);                
+                    row.querySelector('.itemCurrentStock').textContent = parseFloat(currentstock).toFixed(2);
 
                     row.innerHTML = `
                         <td class="itemName">${name}</td>
                         <td class="itemPrice">${parseFloat(price).toFixed(2)}</td>
+                        <td class="itemCurrentStock">${parseFloat(currentstock).toFixed(2)}</td>
                         <td>
                             <button type="button" class="btn btn-sm btn-warning me-1"
-                                    onclick="editItem(${id}, '${name}', ${price}, this)">
+                                    onclick="editItem(${id}, '${name}', ${price}, ${currentstock}, this)">
                                 ✎ Edit
                             </button>
                             <button type="button" class="btn btn-sm btn-danger me-1"
