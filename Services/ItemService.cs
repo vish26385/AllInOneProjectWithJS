@@ -25,7 +25,8 @@ namespace AllInOneProject.Services
                 var item = new Item
                 {
                     Name = request.Name,
-                    Price = request.Price ?? 0
+                    Price = request.Price ?? 0,
+                    CurrentStock = request.CurrentStock ?? 0
                 };
 
                 var result = await _repository.InsertItemAsync(item);
@@ -77,7 +78,8 @@ namespace AllInOneProject.Services
                 {
                     Id = request.Id,
                     Name = request.Name,
-                    Price = request.Price ?? 0
+                    Price = request.Price ?? 0,
+                    CurrentStock = request.CurrentStock ?? 0
                 };
 
                 var result = await _repository.UpdateItemAsync(item);

@@ -11,5 +11,6 @@ namespace AllInOneProject.DTOs
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
         public decimal? Price { get; set; }
+        public decimal? CurrentStock { get; set; }
     }
 }

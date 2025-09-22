@@ -182,7 +182,7 @@
             const response = await fetch('/Item/UpdateItem', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, name, price })
+                body: JSON.stringify({ id, name, price, currentstock })
             });
 
             // 🔹 Handle not logged in (Unauthorized)
