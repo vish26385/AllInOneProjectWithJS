@@ -13,7 +13,8 @@ namespace AllInOneProject.Repositories
         private readonly string _connectionString;
         public PartyRepository(IConfiguration configuration, ApplicationDbContext context)
         {
-            _connectionString = configuration.GetConnectionString("ConnectionString");
+            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+       ?? configuration.GetConnectionString("ConnectionString");
             _context = context;
         }
 

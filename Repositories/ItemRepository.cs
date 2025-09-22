@@ -16,7 +16,8 @@ namespace AllInOneProject.Repositories
         private readonly ApplicationDbContext _context;
         public ItemRepository(ApplicationDbContext context, IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("ConnectionString");
+            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+       ?? configuration.GetConnectionString("ConnectionString");
             _context = context;
         }
 
