@@ -8,11 +8,45 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
+builder.Services.AddControllersWithViews();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+
+string connectionString = "";
+
+var rdsHostname = Environment.GetEnvironmentVariable("RDS_HOSTNAME");
+if (!string.IsNullOrEmpty(rdsHostname))
+{
+    var rdsPort = Environment.GetEnvironmentVariable("RDS_PORT") ?? "1433";
+    var rdsUsername = Environment.GetEnvironmentVariable("RDS_USERNAME");
+    var rdsPassword = Environment.GetEnvironmentVariable("RDS_PASSWORD");
+
+    // SQL Server connection string (no database name needed for Express)
+    connectionString = $"Server={rdsHostname},{rdsPort};Database=master;User ID={rdsUsername};Password={rdsPassword};Encrypt=true;TrustServerCertificate=true;";
+
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
+else
+{
+    // Fallback for local development
+    connectionString = builder.Configuration.GetConnectionString("ConnectionString") ?? "";
+    if (connectionString.Contains("postgresql"))
+    {
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(connectionString));
+    }
+    else
+    {
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString));
+    }
+}
 
 //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 //    .AddCookie(options =>
@@ -64,8 +98,11 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    //var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    //db.Database.Migrate();
+
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.EnsureCreated();
 
     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
