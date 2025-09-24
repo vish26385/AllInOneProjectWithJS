@@ -2,14 +2,20 @@
 using AllInOneProject.Models;
 using AllInOneProject.Repositories;
 using AllInOneProject.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add extensive logging
+Console.WriteLine("=== APPLICATION STARTING ===");
+Console.WriteLine($"Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+Console.WriteLine($"Current Directory: {Environment.CurrentDirectory}");
+
+// CRITICAL FIX: Configure port for Elastic Beanstalk
+// EB Linux expects app to listen on port 5000
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
-builder.Services.AddControllersWithViews();
+Console.WriteLine("Configured to listen on http://0.0.0.0:5000");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -27,7 +33,7 @@ if (!string.IsNullOrEmpty(rdsHostname))
     var rdsPassword = Environment.GetEnvironmentVariable("RDS_PASSWORD");
 
     // SQL Server connection string (no database name needed for Express)
-    connectionString = $"Server={rdsHostname},{rdsPort};Database=master;User ID={rdsUsername};Password={rdsPassword};Encrypt=true;TrustServerCertificate=true;";
+    connectionString = $"Server={rdsHostname},{rdsPort};Database=AllInOneDB;User ID={rdsUsername};Password={rdsPassword};Encrypt=true;TrustServerCertificate=true;";
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(connectionString));
@@ -78,6 +84,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Register connection string in DI
+builder.Services.AddSingleton(connectionString);
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();    
 builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
@@ -98,11 +106,11 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    //var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //db.Database.Migrate();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
 
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    //context.Database.EnsureCreated();
 
     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();

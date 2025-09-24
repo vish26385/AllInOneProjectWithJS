@@ -11,10 +11,9 @@ namespace AllInOneProject.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly string _connectionString;
-        public PartyRepository(IConfiguration configuration, ApplicationDbContext context)
+        public PartyRepository(string connectionString, ApplicationDbContext context)
         {
-            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
-       ?? configuration.GetConnectionString("ConnectionString");
+            _connectionString = connectionString;
             _context = context;
         }
 

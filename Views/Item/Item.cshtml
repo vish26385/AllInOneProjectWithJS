@@ -40,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null)
+                    @if (Model != null && Model.Count > 0)
                     {
                         foreach (var item in Model)
                         {
@@ -68,7 +68,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="4" class="text-center text-muted">No items available</td>
+                            <td colspan="4" id = "firstRow" class="text-center text-muted">No items available</td>
                         </tr>
                     }
                 </tbody>
@@ -121,6 +121,10 @@
 
                     // Option B: Add new row dynamically without reload
                     const table = document.getElementById('itemsTable');
+
+                    const firstRrow = document.getElementById('firstRow');
+                         if (firstRrow) firstRrow.remove();
+
                     const newRow = table.insertRow();
                     
                     newRow.innerHTML = `
@@ -284,8 +288,17 @@
             showMessage(result.message, result.success);
 
             if (result.success) {
-                const row = btn.closest('tr');
+                const row = btn.closest('tr');                
+                if (row.rowIndex = 1)
+                  {
+                      // Option B: Add new row dynamically without reload
+                    const table = document.getElementById('itemsTable');
+                    
+                    const newRow = table.insertRow();
+                    newRow.innerHTML = `<td colspan="4" id = "firstRow" class="text-center text-muted">No items available</td>`;
+                  }
                 if (row) row.remove();
+
 
                 document.getElementById('itemName').value = "";
                 document.getElementById('itemPrice').value = "";

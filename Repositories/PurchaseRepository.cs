@@ -22,10 +22,9 @@ namespace AllInOneProject.Repositories
         private readonly ApplicationDbContext _context;
         private readonly string _connectionString;
 
-        public PurchaseRepository(IConfiguration configuration, ApplicationDbContext context)
+        public PurchaseRepository(string connectionString, ApplicationDbContext context)
         {
-            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
-       ?? configuration.GetConnectionString("ConnectionString");
+            _connectionString = connectionString;
             _context = context;
         }
         public async Task<PurchaseMaster> GetPurchaseMasterDataByIdAsync(int id)

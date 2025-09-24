@@ -22,17 +22,17 @@
                     <tr>
                         <!-- Item Name Dropdown -->
                         <td>
-                            <select class="form-select" name="purchaseMaster.purchaseDetails[@i].ItemId" onchange="this.form.submit()">
+                            <select class="form-select item-select" name="purchaseMaster.purchaseDetails[@i].ItemId" data-row="@i">
                                 <option value="0">-- Select Item --</option>
                                 @foreach (var item in Model.itemMasters)
                                 {
                                     if (Model.purchaseMaster.purchaseDetails[i].ItemId == item.Id)
                                     {
-                                        <option value="@item.Id" selected>@item.Name</option>
+                                        <option value="@item.Id" data-price="@item.Price" selected>@item.Name</option>
                                     }
                                     else
                                     {
-                                        <option value="@item.Id">@item.Name</option>
+                                        <option value="@item.Id" data-price="@item.Price">@item.Name</option>
                                     }
                                 }
                             </select>
@@ -40,17 +40,17 @@
 
                         <!-- Quantity -->
                         <td>
-                            <input type="number" class="form-control text-center" name="purchaseMaster.purchaseDetails[@i].Qty" oninput="this.form.submit()" value="@Model.purchaseMaster.purchaseDetails[i].Qty" />
+                            <input type="number" class="form-control text-center qty-input" name="purchaseMaster.purchaseDetails[@i].Qty" value="@Model.purchaseMaster.purchaseDetails[i].Qty" data-row="@i" />
                         </td>
 
                         <!-- Rate -->
                         <td>
-                            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[@i].Rate" value="@Model.purchaseMaster.purchaseDetails[i].Rate" />
+                            <input type="number" class="form-control text-center rate-input" readonly name="purchaseMaster.purchaseDetails[@i].Rate" value="@Model.purchaseMaster.purchaseDetails[i].Rate" data-row="@i" />
                         </td>
 
                         <!-- Amount -->
                         <td>
-                            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[@i].Amount" value="@Model.purchaseMaster.purchaseDetails[i].Amount" />
+                            <input type="number" class="form-control text-center amount-input" readonly name="purchaseMaster.purchaseDetails[@i].Amount" value="@Model.purchaseMaster.purchaseDetails[i].Amount" data-row="@i" />
                         </td>
 
                         <!-- Actions -->
@@ -86,19 +86,19 @@
         var table = document.getElementById('linesTable').getElementsByTagName('tbody')[0];
         var index = table.rows.length;
         var tr = document.createElement('tr');
-        var itemOptions = `@Html.Raw(string.Join("", ((List<AllInOneProject.DTOs.ItemDto>)ViewBag.Items ?? new List<AllInOneProject.DTOs.ItemDto>()).Select(it => $"<option value=\"{it.Id}\">{it.Name}</option>")))`;
+        var itemOptions = `@Html.Raw(string.Join("", ((List<AllInOneProject.DTOs.ItemDto>)ViewBag.Items ?? new List<AllInOneProject.DTOs.ItemDto>()).Select(it => $"<option value=\"{it.Id}\" data-price=\"{it.Price}\">{it.Name}</option>")))`;
 
 
         tr.innerHTML = `
-        <td><select name="purchaseMaster.purchaseDetails[${index}].ItemId" class="form-select" onchange="this.form.submit()"><option value="">-- Select Item --</option>${itemOptions}</select></td>
+        <td><select name="purchaseMaster.purchaseDetails[${index}].ItemId" class="form-select item-select" data-row="${index}"><option value="">-- Select Item --</option>${itemOptions}</select></td>
         <td>
-            <input type="number" class="form-control text-center" name="purchaseMaster.purchaseDetails[${index}].Qty" oninput="this.form.submit()" value = "0" />
+            <input type="number" class="form-control text-center qty-input" name="purchaseMaster.purchaseDetails[${index}].Qty" data-row="${index}" value = "0" />
         </td>
         <td>
-            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[${index}].Rate" value = "0" />
+           <input type="number" class="form-control text-center rate-input" readonly name="purchaseMaster.purchaseDetails[${index}].Rate" data-row="${index}" value = "0" />
         </td>
         <td>
-            <input type="number" class="form-control text-center" readonly name="purchaseMaster.purchaseDetails[${index}].Amount" value = "0" />
+           <input type="number" class="form-control text-center amount-input" readonly name="purchaseMaster.purchaseDetails[${index}].Amount" data-row="${index}" value = "0" />
         </td>
         <td class="text-center">
             <div class="btn-group" role="group">
@@ -122,4 +122,30 @@
         }
         btn.closest('tr').remove();
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        function recalc(row) {
+            let qty = parseFloat(document.querySelector(`.qty-input[data-row="${row}"]`)?.value || 0);
+            let rate = parseFloat(document.querySelector(`.rate-input[data-row="${row}"]`)?.value || 0);
+            document.querySelector(`.amount-input[data-row="${row}"]`).value = (qty * rate).toFixed(2);
+        }
+
+        document.querySelectorAll(".item-select").forEach(select => {
+            select.addEventListener("change", e => {
+                let row = e.target.dataset.row;
+                let price = e.target.options[e.target.selectedIndex].dataset.price || 0;
+
+                document.querySelector(`.rate-input[data-row="${row}"]`).value = price;
+                recalc(row);
+            });
+        });
+
+        document.querySelectorAll(".qty-input").forEach(input => {
+            input.addEventListener("input", e => {
+                let row = e.target.dataset.row;
+                recalc(row);
+            });
+        });
+    });
+
 </script>
