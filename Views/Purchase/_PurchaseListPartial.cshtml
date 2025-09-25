@@ -130,21 +130,23 @@
             document.querySelector(`.amount-input[data-row="${row}"]`).value = (qty * rate).toFixed(2);
         }
 
-        document.querySelectorAll(".item-select").forEach(select => {
-            select.addEventListener("change", e => {
+        // Delegate for item-select
+        document.getElementById("linesTable").addEventListener("change", function (e) {
+            if (e.target.classList.contains("item-select")) {
                 let row = e.target.dataset.row;
                 let price = e.target.options[e.target.selectedIndex].dataset.price || 0;
 
                 document.querySelector(`.rate-input[data-row="${row}"]`).value = price;
                 recalc(row);
-            });
+            }
         });
 
-        document.querySelectorAll(".qty-input").forEach(input => {
-            input.addEventListener("input", e => {
+        // Delegate for qty-input
+        document.getElementById("linesTable").addEventListener("input", function (e) {
+            if (e.target.classList.contains("qty-input")) {
                 let row = e.target.dataset.row;
                 recalc(row);
-            });
+            }
         });
     });
 

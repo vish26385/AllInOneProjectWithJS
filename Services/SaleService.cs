@@ -7,7 +7,7 @@ namespace AllInOneProject.Services
 {
     public class SaleService : ISaleService
     {
-        private readonly ISaleRepository _repository;
+        private readonly ISaleRepository _repository;       
         public SaleService(ISaleRepository repository)
         {
             _repository = repository;
@@ -127,7 +127,7 @@ namespace AllInOneProject.Services
                     ItemId = d.ItemId,
                     Qty = d.Qty
                 }).ToList();
-
+                
                 // Call repository
                 var result = await _repository.UpdateSaleMasterAsync(saleMaster, request.DeletedSaleDetailIds);
 

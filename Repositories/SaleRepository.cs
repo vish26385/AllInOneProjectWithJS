@@ -1,6 +1,7 @@
 ﻿using AllInOneProject.Data;
 using AllInOneProject.DTOs;
 using AllInOneProject.Models;
+using AllInOneProject.Services;
 using Azure.Core;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,13 @@ namespace AllInOneProject.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly string _connectionString;
-    
-        public SaleRepository(ApplicationDbContext context, string connectionString)
+        private readonly IItemService _itemService;
+
+        public SaleRepository(ApplicationDbContext context, string connectionString, IItemService itemService)
         {
             _connectionString = connectionString;
             _context = context;
+            _itemService = itemService;
         }
 
         public async Task<SalesMaster> GetSaleMasterDataByIdAsync(int id)
@@ -89,24 +92,47 @@ namespace AllInOneProject.Repositories
                 throw new ArgumentException("Invalid sale data.");
 
             var itemMaster = new Item();
-            // Delete sale details if required
-            if (deletedDetailIds != null && deletedDetailIds.Any())
+            var detailsToDelete = _context.SalesDet
+            .Where(d => deletedDetailIds.Contains(d.Id))
+            .ToList();
+
+            _context.SalesDet.RemoveRange(detailsToDelete);
+
+            var itemIds = detailsToDelete
+                .Where(d => d.ItemId > 0)
+                .Select(d => d.ItemId)
+                .Distinct()
+                .ToList();
+
+            var items = _context.Items
+                .Where(i => itemIds.Contains(i.Id))
+                .ToDictionary(i => i.Id);
+
+            foreach (var detail in detailsToDelete)
             {
-                var detailsToDelete = _context.SalesDet.Where(d => deletedDetailIds.Contains(d.Id));
-                _context.SalesDet.RemoveRange(detailsToDelete);
-                foreach (var detail in detailsToDelete)
+                if (detail.ItemId > 0 && items.TryGetValue(detail.ItemId, out var itemMasters))
                 {
-                    if (detail.ItemId > 0)
-                    {
-                        itemMaster = _context.Items?.Find(detail.ItemId);
-                        itemMaster.CurrentStock = itemMaster.CurrentStock + (decimal)detail.Qty;
-                        _context.Entry(itemMaster).State = EntityState.Modified;
-                    }
+                    itemMasters.CurrentStock += (decimal)detail.Qty;
+                    _context.Entry(itemMasters).State = EntityState.Modified;
                 }
             }
 
             if (saleMaster.salesDetails != null)
             {
+                foreach (var detail in saleMaster.salesDetails)
+                {
+                    if (detail.ItemId > 0)
+                    {
+                        var oldDetail = await _context.SalesDet.AsNoTracking().FirstOrDefaultAsync(d => d.Id == detail.Id);
+                        if (oldDetail != null)
+                        {
+                            itemMaster = _context.Items?.Find(detail.ItemId);
+                            itemMaster.CurrentStock = itemMaster.CurrentStock + (decimal)oldDetail.Qty;
+                            _context.Entry(itemMaster).State = EntityState.Modified;
+                        }
+                    }
+                }
+
                 foreach (var detail in saleMaster.salesDetails)
                 {
                     if (detail.ItemId > 0)
