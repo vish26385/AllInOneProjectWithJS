@@ -66,19 +66,6 @@ namespace AllInOneProject.Controllers
             model.partyMasters = responseParties.Data;
             model.purchaseLists = purchaseData.Data;
 
-            //foreach (var detail in model.purchaseMaster.purchaseDetails)
-            //{
-            //    if (detail.ItemId > 0)
-            //    {
-            //        var selectedItem = model.itemMasters.FirstOrDefault(x => x.Id == detail.ItemId);
-            //        if (selectedItem != null)
-            //        {
-            //            detail.Rate = selectedItem.Price;
-            //            detail.Amount = detail.Qty * selectedItem.Price;
-            //        }
-            //    }
-            //}
-
             return View(model);
         }
 

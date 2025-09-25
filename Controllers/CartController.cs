@@ -124,9 +124,6 @@ namespace AllInOneProject.Controllers
             if (response.Data == null) return NotFound();
             var order = response.Data;
 
-            // Make sure OrderItems and Item navigation are loaded in service:
-            // _orderService.GetOrderByIdAsync should Include(o => o.OrderItems).ThenInclude(oi => oi.Item)
-
             using (var ms = new MemoryStream())
             {
                 var writer = new PdfWriter(ms);
@@ -142,7 +139,6 @@ namespace AllInOneProject.Controllers
                 var regularFont = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H);
 
                 // Fonts: use built-in standard fonts (no external files required)
-                //var regularFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
                 var boldFontPath = System.IO.Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.Fonts),
                     "ARIALBD.TTF"   // Arial Bold (works with ₹ too if font supports it)

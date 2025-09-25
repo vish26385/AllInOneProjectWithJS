@@ -115,10 +115,7 @@
             const result = await response.json();
             showMessage(result.message, result.success);
 
-            if (result.success) {
-                    // Option A: Reload page (simpler)
-                    // setTimeout(() => location.reload(), 800);
-
+            if (result.success) {                    
                     // Option B: Add new row dynamically without reload
                     const table = document.getElementById('itemsTable');
 
