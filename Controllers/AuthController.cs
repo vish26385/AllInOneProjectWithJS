@@ -12,13 +12,19 @@ namespace AllInOneProject.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration config, IEmailSender emailSender)
+        public AuthController(UserManager<ApplicationUser> userManager, 
+                              SignInManager<ApplicationUser> signInManager, 
+                              IConfiguration config, 
+                              IEmailSender emailSender,
+                              ILogger<AuthController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _emailSender = emailSender;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -98,7 +104,10 @@ namespace AllInOneProject.Controllers
                 );
             }
             catch (Exception ex)
-            {
+            {                
+                // Or use ILogger
+                _logger.LogError(ex, "Error sending reset password email to {Email}", model.Email);
+
                 // Log exception in real app
                 ModelState.AddModelError("", "Error sending email. Please try again later.");
                 return View(model);

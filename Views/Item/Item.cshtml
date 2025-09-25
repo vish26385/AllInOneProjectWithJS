@@ -372,12 +372,19 @@
             let data = await response.json();
 
             let badge = document.getElementById("cart-count");
-            badge.textContent = data.itemCount;
+            if (badge != null)
+            {
+                badge.textContent = data.itemCount;
 
-            badge.className = data.itemCount > 0 ? "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" : "";
+                badge.className = data.itemCount > 0 ? "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" : "";
 
-            // hide badge if 0
-            badge.style.display = data.itemCount > 0 ? "inline-block" : "none";
+                // hide badge if 0
+                badge.style.display = data.itemCount > 0 ? "inline-block" : "none";
+            }
+            else
+            {
+                console.error("Cart count element not found");
+            }            
         } catch (e) {
             console.error("Error fetching cart count:", e);
         }

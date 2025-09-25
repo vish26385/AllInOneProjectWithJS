@@ -191,7 +191,7 @@
 </html>
 
 <script>
-     async function loadCartCount() {
+    async function loadCartCount() {
         try {
             let response = await fetch('@Url.Action("GetCartCount", "Cart")');
             if (!response.ok) throw new Error("HTTP " + response.status);
@@ -199,17 +199,24 @@
             let data = await response.json();
 
             let badge = document.getElementById("cart-count");
-            badge.textContent = data.itemCount;
+            if (badge) {
+                badge.textContent = data.itemCount;
 
-            badge.className = data.itemCount > 0 ? "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" : "";
+                badge.className = data.itemCount > 0 
+                    ? "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                    : "";
 
-            // hide badge if 0
-            badge.style.display = data.itemCount > 0 ? "inline-block" : "none";
+                // hide badge if 0
+                badge.style.display = data.itemCount > 0 ? "inline-block" : "none";
+            }
+            // if badge is not found, just skip silently
         } catch (e) {
             console.error("Error fetching cart count:", e);
         }
     }
 
-    // Load on page load
-    loadCartCount();
+    // Run only if element exists in DOM
+    if (document.getElementById("cart-count")) {
+        loadCartCount();
+    }
 </script>
