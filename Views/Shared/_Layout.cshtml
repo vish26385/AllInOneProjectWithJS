@@ -193,7 +193,9 @@
 <script>
      async function loadCartCount() {
         try {
-            let response = await fetch('/Cart/GetCartCount');
+            let response = await fetch('@Url.Action("GetCartCount", "Cart")');
+            if (!response.ok) throw new Error("HTTP " + response.status);
+
             let data = await response.json();
 
             let badge = document.getElementById("cart-count");

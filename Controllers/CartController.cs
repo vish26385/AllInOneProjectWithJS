@@ -227,8 +227,14 @@ namespace AllInOneProject.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous] // allow everyone to call this
         public async Task<IActionResult> GetCartCount()
         {
+            // if user not logged in, just return 0
+            if (UserId == null)
+            {
+                return Json(new { itemCount = 0 });
+            }
             var response = await _cartService.GetCartItemsAsync(UserId);
             int itemCount = response.Data.Sum(c => c.Quantity);
             return Json(new { itemCount });
