@@ -125,11 +125,37 @@ namespace AllInOneProject.Repositories
         public async Task<List<PurchaseMaster>> GetPurchaseDataListAsync()
         {
             var purchaseLists = await _context.PurchaseMaster
-                               .Include(s => s.PartyMaster)
-                               .Include(s => s.purchaseDetails)
-                               .ThenInclude(d => d.ItemMaster)
-                               .OrderByDescending(s => s.Id)
-                               .ToListAsync();
+            .OrderByDescending(p => p.Id)
+            .Select(p => new PurchaseMaster
+            {
+                Id = p.Id,
+                PurchaseDate = p.PurchaseDate,
+                PartyMasterId = p.PartyMasterId,
+                PartyMaster = new PartyMaster
+                {
+                    Id = p.PartyMaster.Id,
+                    Name = p.PartyMaster.Name,
+                    Type = p.PartyMaster.Type
+                },
+                purchaseDetails = p.purchaseDetails.Select(d => new PurchaseDetail
+                {
+                    Id = d.Id,
+                    PurchaseMasterId = d.PurchaseMasterId,
+                    ItemId = d.ItemId,
+                    Qty = d.Qty,
+                    Rate = d.ItemMaster.Price,            // populate Rate from Item
+                    Amount = d.Qty * d.ItemMaster.Price,  // compute Amount
+                    ItemMaster = new Item
+                    {
+                        Id = d.ItemMaster.Id,
+                        Name = d.ItemMaster.Name,
+                        Price = d.ItemMaster.Price,
+                        CurrentStock = d.ItemMaster.CurrentStock
+                    }
+                }).ToList()
+            })
+            .AsNoTracking()   // optional: improves performance for read-only
+            .ToListAsync();
 
             return purchaseLists;
         }

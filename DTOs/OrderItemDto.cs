@@ -10,7 +10,6 @@ namespace AllInOneProject.DTOs
         public int ItemId { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-
         public ItemDto Item { get; set; }
     }
 }

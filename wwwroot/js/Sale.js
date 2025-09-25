@@ -242,7 +242,6 @@ async function saveSalesData() {
         .then(data => {
             alert('Saved Successfully.');
             window.location.href = '/Sale/Sale';
-            //document.getElementById('saleMasterId').value = data.id;
         })
         .catch(error => {
             console.error("Error Saving Data.", error)
@@ -252,10 +251,8 @@ async function saveSalesData() {
 function editSale(id, saleDate, dueDays, dueDate, partyId, button) {
     const salesDetails = JSON.parse(button.getAttribute("data-salesdetails"));
     document.getElementById("saleMasterId").value = id;
-    //let saleTDate = new Date(saleDate).toISOString().split('T')[0];
     document.getElementById("saleDate").value = saleDate;
     document.getElementById("dueDays").value = dueDays;
-    //let dueTDate = new Date(dueDate).toISOString().split('T')[0];
     document.getElementById("dueDate").value = dueDate;
     document.getElementById("partyId").value = partyId;
     document.getElementById("btnSave").onclick = updateSalesData;
@@ -364,7 +361,6 @@ async function updateSalesData() {
         .then(data => {
             alert('Saved Successfully.');
             window.location.href = '/Sale/Sale';
-            //document.getElementById('saleMasterId').value = data.id;
         })
         .catch(error => {
             console.error("Error Saving Data.", error)
