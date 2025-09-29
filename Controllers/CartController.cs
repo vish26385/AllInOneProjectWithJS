@@ -139,20 +139,10 @@ namespace AllInOneProject.Controllers
                     var document = new iText.Layout.Document(pdf, PageSize.A4);
                     document.SetMargins(20, 20, 20, 20);
 
-                    //// ✅ Load Unicode font that supports ₹ symbol
-                    //var fontPath = System.IO.Path.Combine(
-                    //    Environment.GetFolderPath(Environment.SpecialFolder.Fonts),
-                    //    "arial.ttf"
-                    //);
                     var fontPath = System.IO.Path.Combine(_env.WebRootPath, "fonts", "arial.ttf");
 
                     var regularFont = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H);
 
-                    //// Fonts: use built-in standard fonts (no external files required)
-                    //var boldFontPath = System.IO.Path.Combine(
-                    //    Environment.GetFolderPath(Environment.SpecialFolder.Fonts),
-                    //    "ARIALBD.TTF"   // Arial Bold (works with ₹ too if font supports it)
-                    //);
                     var boldFontPath = System.IO.Path.Combine(_env.WebRootPath, "fonts", "arialbd.ttf");
 
                     var boldFont = PdfFontFactory.CreateFont(boldFontPath, PdfEncodings.IDENTITY_H);
