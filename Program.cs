@@ -7,21 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add extensive logging
-Console.WriteLine("=== APPLICATION STARTING ===");
-Console.WriteLine($"Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-Console.WriteLine($"Current Directory: {Environment.CurrentDirectory}");
-
 // CRITICAL FIX: Configure port for Elastic Beanstalk
 // EB Linux expects app to listen on port 5000
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
-Console.WriteLine("Configured to listen on http://0.0.0.0:5000");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
-//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 
 string connectionString = "";
 
@@ -108,9 +101,6 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
-
-    //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //context.Database.EnsureCreated();
 
     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
