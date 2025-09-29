@@ -84,7 +84,7 @@ namespace AllInOneProject.Controllers
 
             if (cartItems.Data == null || !cartItems.Data.Any())
             {
-                TempData["Error"] = "Your cart is empty!";
+                TempData["OrderError"] = "Your cart is empty!";
                 return RedirectToAction("Index", "Cart");
             }
 
@@ -93,7 +93,7 @@ namespace AllInOneProject.Controllers
             var orderId = 0;
             if (response.Data == null)
             {
-                TempData["Error"] = "Something went wrong while placing the order.";
+                TempData["OrderError"] = "Something went wrong while placing the order.";
                 return RedirectToAction("Index", "Cart");
             }
             else
@@ -104,11 +104,11 @@ namespace AllInOneProject.Controllers
                 // Clear cart after successful order
                 await _cartService.ClearCartAsync(UserId);
 
-                TempData["Success"] = "Your order has been placed successfully!";
+                TempData["OrderSuccess"] = "Your order has been placed successfully!";
                 return RedirectToAction("OrderConfirmation", new { id = orderId });
             }
 
-            TempData["Error"] = "Something went wrong while placing the order.";
+            TempData["OrderError"] = "Something went wrong while placing the order.";
             return RedirectToAction("Index", "Cart");
         }
         // Order confirmation page
@@ -117,7 +117,7 @@ namespace AllInOneProject.Controllers
             var response = await _orderService.GetOrderByIdAsync(id);
             if (response.Data == null)
             {
-                TempData["Error"] = "Something went wrong while placing the order.";
+                TempData["OrderError"] = "Something went wrong while placing the order.";
                 return RedirectToAction("Index", "Cart");
             }
             return View(response.Data);
