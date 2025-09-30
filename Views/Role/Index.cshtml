@@ -3,6 +3,11 @@
     ViewData["Title"] = "User Role Management";
 }
 
+@* @{
+    var successMessage = TempData["Success"] as string;
+    var errorMessage = TempData["Error"] as string;
+} *@
+
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
@@ -11,6 +16,15 @@
                     <h4 class="mb-0"><i class="bi bi-people-fill"></i> User Role Management</h4>
                 </div>
                 <div class="card-body">
+
+                    @* <div class="toast-container position-fixed top-0 end-0 p-3">
+                        <div id="liveToast" class="toast text-white" role="alert">
+                            <div class="d-flex">
+                                <div class="toast-body"></div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                            </div>
+                        </div>
+                    </div> *@
 
                     <!-- Success / Error Alerts -->
                     @if (TempData["Success"] != null)
@@ -92,3 +106,28 @@
         </div>
     </div>
 </div>
+
+@* @section Scripts {
+    <script>
+        function showToast(message, success) {
+            const toastEl = document.getElementById('liveToast');
+            const toastBody = toastEl.querySelector(".toast-body");
+
+            toastBody.innerText = message;
+            toastEl.classList.remove("bg-success", "bg-danger");
+            toastEl.classList.add(success ? "bg-success" : "bg-danger");
+
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        }
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+                <text>showToast("@Html.Raw(successMessage)", true);</text>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+                <text>showToast("@Html.Raw(errorMessage)", false);</text>
+        }
+    </script>
+} *@

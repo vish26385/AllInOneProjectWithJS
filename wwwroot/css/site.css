@@ -51,12 +51,29 @@ footer {
     opacity: 0; /* hidden by default */
     pointer-events: none; /* no click blocking */
     transition: opacity 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 250px;
 }
 
     .notification.show {
         opacity: 1; /* 👈 notification is faintly visible */
         pointer-events: auto;
         animation: fadeout 3s forwards;
+    }
+
+    .notification .icon {
+        font-size: 18px;
+    }
+
+    .notification .close-btn {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 18px;
+        margin-left: auto;
+        cursor: pointer;
     }
 
 @keyframes fadeout {

@@ -20,7 +20,11 @@
                     <input type="hidden" type="number" id="itemCurrentStock" />
                     <button type="button" id="btnItemSave" class="btn btn-primary w-100" onclick="insertItem()">Save</button>
                 </form>
-                <div class="notification" id="itemMessage"></div>
+                <div class="notification" id="itemMessage">
+                    <span class="icon"></span>
+                    <span class="text"></span>
+                    <button class="close-btn">&times;</button>
+                </div>
             </div>
         </div>
     </div>
@@ -350,20 +354,26 @@
 
     function showMessage(message, success) {
         const msgBox = document.getElementById('itemMessage');
-              msgBox.innerText = message;
+         const icon = msgBox.querySelector('.icon');
+         const text = msgBox.querySelector('.text');
+         const closeBtn = msgBox.querySelector('.close-btn');
 
-              // background color based on success/failure
-              msgBox.style.backgroundColor = success ? "#4BB543" : "#DC3545";
+            // text + colors
+            text.innerText = message;
+            msgBox.style.backgroundColor = success ? "#4BB543" : "#DC3545";
+            icon.innerText = success ? "✅" : "❌";
 
-              // trigger animation
-              msgBox.classList.remove("show");
-              void msgBox.offsetWidth; // reflow hack to restart animation
-              msgBox.classList.add("show");
+            // trigger animation
+            msgBox.classList.remove("show");
+            void msgBox.offsetWidth; // reflow hack
+            msgBox.classList.add("show");
 
-              // auto hide after 3s
-              setTimeout(() => {
-                  msgBox.classList.remove("show");
-              }, 2000);
+            // auto hide
+            const hide = () => msgBox.classList.remove("show");
+            setTimeout(hide, 2000);
+
+            // manual close
+            closeBtn.onclick = hide;
     }
    
      async function loadCartCount() {
